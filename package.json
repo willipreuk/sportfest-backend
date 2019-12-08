@@ -15,7 +15,9 @@
     "@types/node": "^12.12.14",
     "nodemon": "^2.0.1",
     "ts-node": "^8.5.4",
-    "tslint": "^5.20.1",
     "typescript": "^3.7.3"
+  },
+  "dependencies": {
+    "eslint": "^6.7.2"
   }
 }
