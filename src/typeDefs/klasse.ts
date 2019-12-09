@@ -8,7 +8,7 @@ export default gql`
     }
 
     extend type Query {
-        allklassen: [Klasse!]!
+        allklassen(stufe: Int): [Klasse!]
         klasse(id: Int!): Klasse
     }
 

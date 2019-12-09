@@ -14,13 +14,13 @@ export default gql`
     }
 
     type Query {
-        allUsers: [User!]!
+        allUsers: [User!]
         user(username: String!): User
     }
 
     type Mutation {
         addUser(username: String!, password: String!, rolle: Rolle!): User!
-        deleteUser(rolle: Rolle): User!
-        updateUser(username: String!, password: String!, rolle: Rolle!): User!
+        deleteUser(rolle: Rolle): User
+        updateUser(username: String!, password: String!, rolle: Rolle!): User
     }
 `;
