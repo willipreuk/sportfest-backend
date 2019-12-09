@@ -1,10 +1,11 @@
 import { ApolloServer } from 'apollo-server';
-// eslint-disable-next-line import/no-unresolved
 import { initDB } from './database';
+import user from './typeDefs/user';
+
 
 initDB();
 
-const server = new ApolloServer({});
+const server = new ApolloServer({ typeDefs: [user] });
 
 // eslint-disable-next-line no-console
 server.listen().then(({ url }) => console.log(`🚀  Server ready at ${url}`));
