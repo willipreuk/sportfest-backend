@@ -4,8 +4,8 @@ export default gql`
     type Ergebnis {
         id: Int!
         wert: Float
-        idschueler: Int!
-        iddiziplin: Int!
+        schueler: Schueler!
+        Diziplin: Disziplin!
     }
 
     extend type Query {

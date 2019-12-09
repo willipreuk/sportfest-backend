@@ -11,7 +11,7 @@ export default gql`
         vorname: String!
         nachname: String!
         geschlecht: Geschlecht!
-        idklasse: Int!
+        klasse: Klasse!
     }
 
     extend type Query {
@@ -24,5 +24,4 @@ export default gql`
         deleteSchueler(id: Int!): Schueler
         updateSchueler(id: Int!, vorname: String, nachname: String, geschlecht: Geschlecht, idklasse: Int): Schueler
     }
-
 `;

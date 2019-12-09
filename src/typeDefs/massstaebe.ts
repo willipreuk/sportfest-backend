@@ -3,7 +3,7 @@ import { gql } from 'apollo-server';
 export default gql`
     type Massstab {
         id: Int!
-        iddisziplin: Int!
+        diziplin: Disziplin!
         geschlecht: Geschlecht!
         punkte: Int!
         wert: Float!
