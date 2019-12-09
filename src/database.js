@@ -1,7 +1,7 @@
 import mysql from 'mysql';
 
 // eslint-disable-next-line
-let connection: mysql.Connection | undefined;
+let connection;
 
 export const initDB = () => {
   connection = mysql.createConnection({
