@@ -5,10 +5,13 @@ import klasse from './typeDefs/klasse';
 import schueler from './typeDefs/schueler';
 import massstaebe from './typeDefs/massstaebe';
 import disziplin from './typeDefs/disziplin';
+import ergebnis from './typeDefs/ergebnis';
 
 initDB();
 
-const server = new ApolloServer({ typeDefs: [user, klasse, schueler, massstaebe, disziplin] });
+const server = new ApolloServer(
+  { typeDefs: [user, klasse, schueler, massstaebe, disziplin, ergebnis] },
+);
 
 // eslint-disable-next-line no-console
 server.listen().then(({ url }) => console.log(`🚀  Server ready at ${url}`));
