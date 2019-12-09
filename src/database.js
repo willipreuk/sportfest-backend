@@ -1,16 +1,12 @@
-import mysql from 'mysql';
+import mysql from 'mysql2';
 
-// eslint-disable-next-line
-let connection;
-
-export const initDB = () => {
-  connection = mysql.createConnection({
+export default () => {
+  const connection = mysql.createConnection({
     host: 'localhost',
     user: 'sportfest-DEV',
     password: 'password',
     database: 'sportfestDEV',
   });
   connection.connect();
+  return connection;
 };
-
-export default connection;
