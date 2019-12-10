@@ -14,7 +14,7 @@ export default gql`
     }
 
     type Query {
-        allUsers: [User!]
+        allUser: [User!]
         user(username: String!): User
     }
 

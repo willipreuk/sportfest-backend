@@ -6,6 +6,7 @@ import schueler from './typeDefs/schueler';
 import massstaebe from './typeDefs/massstaebe';
 import disziplin from './typeDefs/disziplin';
 import ergebnis from './typeDefs/ergebnis';
+import userResolver from './resolvers/user';
 
 const db = initDB();
 
@@ -13,6 +14,7 @@ const server = new ApolloServer(
   {
     context: { db },
     typeDefs: [user, klasse, schueler, massstaebe, disziplin, ergebnis],
+    resolvers: userResolver,
   },
 );
 
