@@ -1,4 +1,5 @@
 import { ApolloServer } from 'apollo-server';
+import dotenv from 'dotenv';
 import initDB from './database';
 import user from './typeDefs/user';
 import klasse from './typeDefs/klasse';
@@ -7,6 +8,8 @@ import massstaebe from './typeDefs/massstaebe';
 import disziplin from './typeDefs/disziplin';
 import ergebnis from './typeDefs/ergebnis';
 import userResolver from './resolvers/user';
+
+dotenv.config();
 
 const db = initDB();
 
