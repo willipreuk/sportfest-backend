@@ -13,26 +13,31 @@ export default gql`
         password: String!
         rolle: Rolle!
     }
-    
+
     type CreateUserPayload {
         username: String!
         rolle: String!
         id: Int!
     }
-    
+
     type DeleteUserPayload {
         id: Int!
     }
-    
+
     type UpdateUserPayload {
         id: Int!
         username: String!
         rolle: String!
     }
 
+    type LoginPayload {
+        jwt: String!
+    }
+
     type Query {
         allUser: [User!]
         user(username: String, id: Int): User
+        login(username: String!, password: String!): LoginPayload
     }
 
     type Mutation {

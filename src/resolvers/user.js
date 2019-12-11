@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
-import { UserInputError } from 'apollo-server';
+import { UserInputError, AuthenticationError } from 'apollo-server';
+import jwt from 'jsonwebtoken';
 
 export default {
   Query: {
@@ -15,12 +16,30 @@ export default {
       const [rows] = await db.execute('SELECT iduser AS id, username, rolle FROM user WHERE iduser = ?', [id]);
       return rows[0];
     },
+    login: async (obj, { username, password }, { db }) => {
+      const [rows] = await db.query('SELECT password, iduser as id, rolle  FROM user WHERE username = ?', [username]);
+      if (rows.length < 1) {
+        throw new AuthenticationError('NOT_FOUND');
+      }
+
+      if (await bcrypt.compare(password, rows[0].password)) {
+        const token = jwt.sign(
+          { id: rows[0].password, rolle: rows[0].rolle },
+          process.env.SECURITY_PRIVATE_KEY,
+        );
+        return { jwt: token };
+      }
+      throw new AuthenticationError('WRONG_PASSWORD');
+    },
   },
   Mutation: {
     addUser: async (obj, args, { db }) => {
       try {
         const user = args;
-        user.password = await bcrypt.hash(args.password, 12);
+        user.password = await bcrypt.hash(
+          args.password,
+          parseInt(process.env.SECURITY_SALT_ROUNDS, 10),
+        );
         const [res] = await db.query('INSERT INTO user SET ?', args);
         delete user.password;
         return { ...user, id: res.insertId };
@@ -45,7 +64,10 @@ export default {
 
       const { password } = newUser;
       if (password) {
-        newUser.password = await bcrypt.hash(password, 12);
+        newUser.password = await bcrypt.hash(
+          password,
+          parseInt(process.env.SECURITY_SALT_ROUNDS, 10),
+        );
       }
 
       const [rows] = await db.query('UPDATE user SET ? WHERE iduser = ?', [newUser, args.id]);
