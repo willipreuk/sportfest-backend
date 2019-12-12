@@ -15,6 +15,6 @@ export default gql`
     extend type Mutation {
         addKlasse(stufe: Int!, name: Int!): Klasse!
         deleteKlasse(id: Int!): Klasse
-        updateKlasse(stufe: Int, klasse: Int): Klasse
+        updateKlasse(id: Int!, stufe: Int, name: Int): Klasse
     }
 `;
