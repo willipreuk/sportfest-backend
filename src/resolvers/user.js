@@ -4,16 +4,16 @@ import jwt from 'jsonwebtoken';
 
 export default {
   Query: {
-    allUser: async (obj, args, { db }) => {
+    allUser: async (obj, args, { db, permission }) => {
+      permission.check({ rolle: permission.ADMIN });
+
       const [rows] = await db.query('SELECT iduser AS id, username, rolle FROM user');
       return rows;
     },
-    user: async (obj, { id, username }, { db }) => {
-      if (username) {
-        const [rows] = await db.execute('SELECT iduser AS id, username, rolle FROM user WHERE username = ?', [username]);
-        return rows[0];
-      }
-      const [rows] = await db.execute('SELECT iduser AS id, username, rolle FROM user WHERE iduser = ?', [id]);
+    user: async (obj, { username, id }, { db, permission }) => {
+      permission.check({ rolle: permission.ADMIN, username, id });
+
+      const [rows] = await db.execute('SELECT iduser AS id, username, rolle FROM user WHERE username = ?', [username]);
       return rows[0];
     },
     login: async (obj, { username, password }, { db }) => {
@@ -24,7 +24,7 @@ export default {
 
       if (await bcrypt.compare(password, rows[0].password)) {
         const token = jwt.sign(
-          { id: rows[0].password, rolle: rows[0].rolle },
+          { id: rows[0].id, rolle: rows[0].rolle },
           process.env.SECURITY_PRIVATE_KEY,
         );
         return { jwt: token };
@@ -33,7 +33,9 @@ export default {
     },
   },
   Mutation: {
-    addUser: async (obj, args, { db }) => {
+    addUser: async (obj, args, { db, permission }) => {
+      permission.check({ rolle: permission.ADMIN });
+
       try {
         const user = args;
         user.password = await bcrypt.hash(
@@ -51,14 +53,18 @@ export default {
         }
       }
     },
-    deleteUser: async (obj, { id }, { db }) => {
+    deleteUser: async (obj, { id }, { db, permission }) => {
+      permission.check({ rolle: permission.ADMIN });
+
       const [rows] = await db.query('DELETE FROM user WHERE iduser = ?', [id]);
       if (rows.affectedRows > 0) {
         return { id };
       }
       throw new UserInputError('NOT_FOUND');
     },
-    updateUser: async (obj, args, { db }) => {
+    updateUser: async (obj, args, { db, permission }) => {
+      permission.check({ rolle: permission.ADMIN, id: args.id, username: args.username });
+
       const newUser = { ...args };
       delete newUser.id;
 
