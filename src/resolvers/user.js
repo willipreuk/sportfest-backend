@@ -12,8 +12,14 @@ export default {
     },
     user: async (obj, { username, id }, { db, permission }) => {
       permission.check({ rolle: permission.ADMIN, username, id });
-
-      const [rows] = await db.execute('SELECT iduser AS id, username, rolle FROM user WHERE username = ?', [username]);
+      if (username) {
+        const [rows] = await db.execute(
+          'SELECT iduser AS id, username, rolle FROM user WHERE username = ?',
+          [username],
+        );
+        return rows[0];
+      }
+      const [rows] = await db.execute('SELECT iduser AS id, username, rolle FROM user WHERE iduser = ?', [id]);
       return rows[0];
     },
     login: async (obj, { username, password }, { db }) => {

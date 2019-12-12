@@ -1,6 +1,7 @@
 import { ApolloServer, AuthenticationError } from 'apollo-server';
 import dotenv from 'dotenv';
 import jwt, { JsonWebTokenError } from 'jsonwebtoken';
+import { merge } from 'lodash';
 import initDB from './database';
 import user from './typeDefs/user';
 import klasse from './typeDefs/klasse';
@@ -9,6 +10,7 @@ import massstaebe from './typeDefs/massstaebe';
 import disziplin from './typeDefs/disziplin';
 import ergebnis from './typeDefs/ergebnis';
 import userResolver from './resolvers/user';
+import klassenResolver from './resolvers/klassen';
 
 dotenv.config();
 
@@ -68,7 +70,7 @@ const server = new ApolloServer(
       }
     },
     typeDefs: [user, klasse, schueler, massstaebe, disziplin, ergebnis],
-    resolvers: userResolver,
+    resolvers: merge(userResolver, klassenResolver),
   },
 );
 
