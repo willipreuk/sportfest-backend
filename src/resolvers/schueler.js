@@ -1,13 +1,21 @@
 import { UserInputError } from 'apollo-server';
 
 export default {
+  Ergebnis: {
+    schueler: async (obj, args, { db, permission }) => {
+      permission.check({ rolle: permission.SCHREIBER });
+
+      const [rows] = await db.query('SELECT idschueler as id, vorname, nachname, geschlecht, idklasse FROM schueler WHERE idschueler = ?', [obj.idschueler]);
+      return rows[0];
+    },
+  },
   Query: {
     allSchueler: async (obj, { idklasse }, { db, permission }) => {
       permission.check({ rolle: permission.SCHREIBER });
 
       if (idklasse) {
         const [rows] = await db.query(
-          'SELECT idschueler as id, name, nachname, geschlecht, idklasse FROM schueler s LEFT JOIN klassen k on s.idklasse = k.idklassen WHERE idklasse = ?',
+          'SELECT idschueler as id, vorname, nachname, geschlecht, idklasse FROM schueler WHERE idklasse = ?',
           [idklasse],
         );
         return rows;

@@ -13,6 +13,7 @@ import userResolver from './resolvers/user';
 import klassenResolver from './resolvers/klassen';
 import schuelerResolver from './resolvers/schueler';
 import disziplinResolver from './resolvers/disziplin';
+import ergebnisResolver from './resolvers/ergebnis';
 
 dotenv.config();
 
@@ -72,7 +73,13 @@ const server = new ApolloServer(
       }
     },
     typeDefs: [user, klasse, schueler, massstaebe, disziplin, ergebnis],
-    resolvers: merge(userResolver, klassenResolver, schuelerResolver, disziplinResolver),
+    resolvers: merge(
+      userResolver,
+      klassenResolver,
+      schuelerResolver,
+      disziplinResolver,
+      ergebnisResolver,
+    ),
   },
 );
 

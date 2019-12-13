@@ -5,16 +5,16 @@ export default gql`
         id: Int!
         wert: Float
         schueler: Schueler!
-        Diziplin: Disziplin!
+        disziplin: Disziplin!
     }
 
     extend type Query {
-        allErgebnis(idschueler: Int, iddiziplin: Int): [Ergebnis!]
+        allErgebnis(idschueler: Int, iddisziplinen: Int): [Ergebnis!]
         ergebnis(id: Int!): Ergebnis
     }
 
     extend type Mutation {
-        addErgebnis(wert: Float, idschueler: Int!, iddiziplin: Int!): Ergebnis!
+        addErgebnis(wert: Float, idschueler: Int!, iddisziplin: Int!): Ergebnis!
         updateErgebnis(id: Int!, wert: Float, idschueler: Int, iddiziplin: Int): Ergebnis
         deleteErgebnis(id: Int!): Ergebnis
     }
