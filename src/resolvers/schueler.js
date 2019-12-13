@@ -34,7 +34,7 @@ export default {
           throw new UserInputError('KLASSE_DOES_NOT_EXIST');
         }
       }
-      throw new UserInputError('SCHUELER_DOES_EXIST');
+      return null;
     },
     deleteSchueler: async (obj, { id }, { db, permission }) => {
       permission.check({ rolle: permission.ADMIN });
