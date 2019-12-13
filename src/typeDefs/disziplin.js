@@ -8,7 +8,7 @@ export default gql`
 
     extend type Query {
         allDisziplin(name: String): [Disziplin!]
-        diziplin(id: Int!): Disziplin
+        disziplin(id: Int!): Disziplin
     }
 
     extend type Mutation {
@@ -16,5 +16,4 @@ export default gql`
         updateDiziplin(id: Int!, name: String): Disziplin
         deleteDiziplin(id: Int!): Disziplin
     }
-
 `;
