@@ -1,6 +1,14 @@
 import { UserInputError } from 'apollo-server';
 
 export default {
+  Ergebnis: {
+    disziplin: async (obj, args, { db, permission }) => {
+      permission.check({ rolle: permission.SCHREIBER });
+
+      const [rows] = await db.query('SELECT iddisziplinen as id, name FROM disziplinen WHERE iddisziplinen = ?', [obj.iddisziplinen]);
+      return rows[0];
+    },
+  },
   Query: {
     allDisziplin: async (obj, { name }, { db, permission }) => {
       permission.check({ rolle: permission.ADMIN });
