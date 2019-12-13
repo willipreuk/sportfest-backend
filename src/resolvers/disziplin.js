@@ -22,4 +22,37 @@ export default {
       return rows[0];
     },
   },
+  Mutation: {
+    addDisziplin: async (obj, args, { db, permission }) => {
+      permission.check({ rolle: permission.ADMIN });
+
+      const [res] = await db.query('INSERT INTO disziplinen SET ?', [args]);
+      return { ...args, id: res.insertId };
+    },
+    deleteDisziplin: async (obj, { id }, { db, permission }) => {
+      permission.check({ rolle: permission.ADMIN });
+
+      const [res] = await db.query('DELETE FROM disziplinen WHERE iddisziplinen = ?', [id]);
+
+      if (res.affectedRows > 0) {
+        return { id };
+      }
+      throw new UserInputError('NOT_FOUND');
+    },
+    updateDisziplin: async (obj, args, { db, permission }) => {
+      permission.check({ rolle: permission.ADMIN });
+
+      const disziplin = { ...args };
+      delete disziplin.id;
+
+      const [res] = await db.query('UPDATE disziplinen SET ? WHERE iddisziplinen = ?', [disziplin, args.id]);
+
+      if (res.affectedRows < 1) {
+        throw new UserInputError('NOT_FOUND');
+      }
+
+      const [rows] = await db.query('SELECT iddisziplinen as id, name FROM disziplinen WHERE iddisziplinen = ? ', [args.id]);
+      return rows[0];
+    },
+  },
 };

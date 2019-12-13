@@ -5,6 +5,10 @@ export default gql`
         id: Int!
         name: String!
     }
+    
+    type DeleteDisziplinPayload {
+        id: Int!
+    }
 
     extend type Query {
         allDisziplin(name: String): [Disziplin!]
@@ -12,8 +16,8 @@ export default gql`
     }
 
     extend type Mutation {
-        addDiziplin(name: String!): Disziplin!
-        updateDiziplin(id: Int!, name: String): Disziplin
-        deleteDiziplin(id: Int!): Disziplin
+        addDisziplin(name: String!): Disziplin!
+        updateDisziplin(id: Int!, name: String): Disziplin
+        deleteDisziplin(id: Int!): DeleteDisziplinPayload
     }
 `;
