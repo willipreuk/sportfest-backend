@@ -27,4 +27,22 @@ export default {
       throw new UserInputError('NOT_FOUND');
     },
   },
+  Mutation: {
+    updateErgebnis: async (obj, args, { db, permission }) => {
+      permission.check({ rolle: permission.SCHREIBER });
+
+      const [res] = await db.query('REPLACE INTO ergebnisse SET ?', args);
+      return { ...args, id: res.insertId };
+    },
+    deleteErgebnis: async (obj, { id }, { db, permission }) => {
+      permission.check({ rolle: permission.SCHREIBER });
+
+      const [res] = await db.query('DELETE FROM ergebnisse WHERE idergebnisse = ?', [id]);
+
+      if (res.affectedRows > 0) {
+        return { id };
+      }
+      throw new UserInputError('NOT_FOUND');
+    },
+  },
 };
