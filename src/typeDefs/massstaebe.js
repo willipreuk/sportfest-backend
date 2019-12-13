@@ -3,21 +3,21 @@ import { gql } from 'apollo-server';
 export default gql`
     type Massstab {
         id: Int!
-        diziplin: Disziplin!
+        disziplin: Disziplin!
         geschlecht: Geschlecht!
         punkte: Int!
         wert: Float!
-        klassen_stufe: Int!
+        klassenStufe: Int!
     }
 
     extend type Query {
-        allMassstab(iddisziplin: Int, klassen_stufe: Int): [Massstab!]
-        massstab(id: Int!): Massstab
+        allMassstab(iddisziplinen: Int, klassenStufe: Int): [Massstab!]
+        massstab(geschlecht: Geschlecht!, klassenStufe: Int!, iddisziplinen: Int!): [Massstab!]
     }
 
     extend type Mutation {
-        addMassstab(iddisziplin: Int!, geschlecht: Geschlecht!, punkte: Int!, wert: Float!, klassen_stufe: Int!): Massstab!
-        updateMassstab(id: Int!, iddisziplin: Int, geschlecht: Geschlecht, punkte: Int, wert: Float, klassen_stufe: Int): Massstab
+        addMassstab(iddisziplinen: Int!, geschlecht: Geschlecht!, punkte: Int!, wert: Float!, klassenStufe: Int!): Massstab!
+        updateMassstab(id: Int!, iddisziplinen: Int, geschlecht: Geschlecht, punkte: Int, wert: Float, klassenStufe: Int): Massstab
         deleteMassstab(id: Int!): Massstab
     }
 `;
