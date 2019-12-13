@@ -11,5 +11,8 @@ export default () => {
     queueLimit: 0,
   });
   connection = connection.promise();
+
+  // eslint-disable-next-line no-console
+  console.log('🚀  MYSQL Pool ready');
   return connection;
 };

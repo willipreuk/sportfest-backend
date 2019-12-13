@@ -1,20 +1,9 @@
 import { ApolloServer, AuthenticationError } from 'apollo-server';
 import dotenv from 'dotenv';
 import jwt, { JsonWebTokenError } from 'jsonwebtoken';
-import { merge } from 'lodash';
 import initDB from './database';
-import user from './typeDefs/user';
-import klasse from './typeDefs/klasse';
-import schueler from './typeDefs/schueler';
-import massstaebe from './typeDefs/massstaebe';
-import disziplin from './typeDefs/disziplin';
-import ergebnis from './typeDefs/ergebnis';
-import userResolver from './resolvers/user';
-import klassenResolver from './resolvers/klassen';
-import schuelerResolver from './resolvers/schueler';
-import disziplinResolver from './resolvers/disziplin';
-import ergebnisResolver from './resolvers/ergebnis';
-import massstaebeResolver from './resolvers/massstaebe';
+import typeDefs from './typeDefs';
+import resolvers from './resolvers';
 
 dotenv.config();
 
@@ -73,17 +62,10 @@ const server = new ApolloServer(
         throw e;
       }
     },
-    typeDefs: [user, klasse, schueler, massstaebe, disziplin, ergebnis],
-    resolvers: merge(
-      userResolver,
-      klassenResolver,
-      schuelerResolver,
-      disziplinResolver,
-      ergebnisResolver,
-      massstaebeResolver,
-    ),
+    typeDefs,
+    resolvers,
   },
 );
 
 // eslint-disable-next-line no-console
-server.listen().then(({ url }) => console.log(`🚀  Server ready at ${url}`));
+server.listen().then(({ url }) => console.log(`🚀  GraphQL Server ready at ${url}`));

@@ -10,7 +10,7 @@ export default {
 
       if (iddisziplinen && klassenStufe) {
         const [rows] = await db.query(
-          `${select} WHERE klassen_stufe = ? AND iddisziplinen = ? AND geschlecht = ?`,
+          `${select} WHERE klassen_stufe = ? AND iddisziplinen = ?`,
           [klassenStufe, iddisziplinen],
         );
         return rows;
