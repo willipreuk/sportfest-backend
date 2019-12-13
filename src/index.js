@@ -14,6 +14,7 @@ import klassenResolver from './resolvers/klassen';
 import schuelerResolver from './resolvers/schueler';
 import disziplinResolver from './resolvers/disziplin';
 import ergebnisResolver from './resolvers/ergebnis';
+import massstaebeResolver from './resolvers/massstaebe';
 
 dotenv.config();
 
@@ -79,6 +80,7 @@ const server = new ApolloServer(
       schuelerResolver,
       disziplinResolver,
       ergebnisResolver,
+      massstaebeResolver,
     ),
   },
 );
