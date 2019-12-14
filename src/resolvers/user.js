@@ -7,23 +7,23 @@ export default {
     allUser: async (obj, args, { db, permission }) => {
       permission.check({ rolle: permission.ADMIN });
 
-      const [rows] = await db.query('SELECT iduser AS id, username, rolle FROM user');
+      const [rows] = await db.query('SELECT id, username, rolle FROM user');
       return rows;
     },
     user: async (obj, { username, id }, { db, permission }) => {
       permission.check({ rolle: permission.ADMIN, username, id });
       if (username) {
         const [rows] = await db.execute(
-          'SELECT iduser AS id, username, rolle FROM user WHERE username = ?',
+          'SELECT id, username, rolle FROM user WHERE username = ?',
           [username],
         );
         return rows[0];
       }
-      const [rows] = await db.execute('SELECT iduser AS id, username, rolle FROM user WHERE iduser = ?', [id]);
+      const [rows] = await db.execute('SELECT id, username, rolle FROM user WHERE id = ?', [id]);
       return rows[0];
     },
     login: async (obj, { username, password }, { db }) => {
-      const [rows] = await db.query('SELECT password, iduser as id, rolle  FROM user WHERE username = ?', [username]);
+      const [rows] = await db.query('SELECT password, id, rolle FROM user WHERE username = ?', [username]);
       if (rows.length < 1) {
         throw new AuthenticationError('NOT_FOUND');
       }
@@ -62,7 +62,7 @@ export default {
     deleteUser: async (obj, { id }, { db, permission }) => {
       permission.check({ rolle: permission.ADMIN });
 
-      const [rows] = await db.query('DELETE FROM user WHERE iduser = ?', [id]);
+      const [rows] = await db.query('DELETE FROM user WHERE id = ?', [id]);
       if (rows.affectedRows > 0) {
         return { id };
       }
@@ -82,12 +82,12 @@ export default {
         );
       }
 
-      const [rows] = await db.query('UPDATE user SET ? WHERE iduser = ?', [newUser, args.id]);
+      const [rows] = await db.query('UPDATE user SET ? WHERE id = ?', [newUser, args.id]);
       if (rows.affectedRows < 1) {
         throw new UserInputError('NOT_FOUND');
       }
 
-      const [res] = await db.query('SELECT iduser, username, rolle, iduser AS id  FROM user WHERE iduser = ? ', [args.id]);
+      const [res] = await db.query('SELECT id, username, rolle, FROM user WHERE id = ? ', [args.id]);
       return res[0];
     },
   },
