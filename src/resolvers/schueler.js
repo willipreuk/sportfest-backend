@@ -118,11 +118,10 @@ export default {
             counter += 1;
           });
           await Promise.all(klassenPromises);
-
-          await connection.commit();
         });
 
         await Promise.all(promises);
+        await connection.commit();
       } catch (e) {
         await connection.rollback();
         throw e;
