@@ -13,12 +13,12 @@ export default gql`
     }
 
     extend type Query {
-        allErgebnis(idschueler: Int, iddisziplinen: Int): [Ergebnis!]
+        allErgebnis(idschueler: Int, iddisziplin: Int): [Ergebnis!]
         ergebnis(id: Int!): Ergebnis
     }
 
     extend type Mutation {
-        updateErgebnis(wert: Float, idschueler: Int, iddisziplinen: Int): Ergebnis!
+        updateErgebnis(wert: Float, idschueler: Int, iddisziplin: Int): Ergebnis!
         deleteErgebnis(id: Int!): DeleteErgebnisPayload!
     }
 `;

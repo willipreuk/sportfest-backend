@@ -17,7 +17,7 @@ export default gql`
 
     extend type Mutation {
         addDisziplin(name: String!): Disziplin!
-        updateDisziplin(id: Int!, name: String): Disziplin
-        deleteDisziplin(id: Int!): DeleteDisziplinPayload
+        updateDisziplin(id: Int!, name: String): Disziplin!
+        deleteDisziplin(id: Int!): DeleteDisziplinPayload!
     }
 `;

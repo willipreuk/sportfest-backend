@@ -40,7 +40,7 @@ const server = new ApolloServer(
 
       try {
         const data = jwt.verify(token, process.env.SECURITY_PRIVATE_KEY);
-        const [rows] = await db.query('SELECT rolle, iduser as id, username FROM user WHERE iduser = ?', [data.id]);
+        const [rows] = await db.query('SELECT rolle, id, username FROM user WHERE id = ?', [data.id]);
         const userObj = { ...rows[0] };
         return {
           db,

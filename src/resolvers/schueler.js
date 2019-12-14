@@ -5,7 +5,7 @@ export default {
     schueler: async (obj, args, { db, permission }) => {
       permission.check({ rolle: permission.SCHREIBER });
 
-      const [rows] = await db.query('SELECT idschueler as id, vorname, nachname, geschlecht, idklasse FROM schueler WHERE idschueler = ?', [obj.idschueler]);
+      const [rows] = await db.query('SELECT * FROM schueler WHERE id = ?', [obj.idschueler]);
       return rows[0];
     },
   },
@@ -15,18 +15,18 @@ export default {
 
       if (idklasse) {
         const [rows] = await db.query(
-          'SELECT idschueler as id, vorname, nachname, geschlecht, idklasse FROM schueler WHERE idklasse = ?',
+          'SELECT * FROM schueler WHERE idklasse = ?',
           [idklasse],
         );
         return rows;
       }
-      const [rows] = await db.query('SELECT idschueler as id, nachname, vorname, geschlecht, idklasse FROM schueler');
+      const [rows] = await db.query('SELECT * FROM schueler');
       return rows;
     },
     schueler: async (obj, { id }, { db, permission }) => {
       permission.check({ rolle: permission.SCHREIBER });
 
-      const [rows] = await db.query('SELECT s.idschueler as id, nachname, vorname, geschlecht, idklasse FROM schueler WHERE idschueler = ?', [id]);
+      const [rows] = await db.query('SELECT * FROM schueler WHERE id = ?', [id]);
       return rows[0];
     },
   },
@@ -47,7 +47,7 @@ export default {
     deleteSchueler: async (obj, { id }, { db, permission }) => {
       permission.check({ rolle: permission.ADMIN });
 
-      const [res] = await db.query('DELETE FROM schueler WHERE idschueler = ?', [id]);
+      const [res] = await db.query('DELETE FROM schueler WHERE id = ?', [id]);
 
       if (res.affectedRows > 0) {
         return { id };
@@ -60,14 +60,13 @@ export default {
       const schueler = { ...args };
       delete schueler.id;
 
-      const [res] = await db.query('UPDATE schueler SET ? WHERE idschueler = ?', [schueler, args.id]);
+      const [res] = await db.query('UPDATE schueler SET ? WHERE id = ?', [schueler, args.id]);
 
-      if (res.affectedRows < 1) {
-        throw new UserInputError('NOT_FOUND');
+      if (res.affectedRows > 0) {
+        const [rows] = await db.query('SELECT + FROM schueler WHERE id = ? ', [args.id]);
+        return rows[0];
       }
-
-      const [rows] = await db.query('SELECT idschueler as id, nachname, vorname, geschlecht, idklasse FROM schueler WHERE idschueler = ? ', [args.id]);
-      return rows[0];
+      throw new UserInputError('NOT_FOUND');
     },
   },
 };

@@ -1,37 +1,33 @@
 import { UserInputError } from 'apollo-server';
-import { set } from 'lodash';
-
-const select = 'SELECT idmassstaebe as id, iddisziplinen, geschlecht, punkte, werte as wert, klassen_stufe as klassenStufe FROM massstaebe';
 
 export default {
   Query: {
-    allMassstab: async (obj, { iddisziplinen, klassenStufe }, { db, permission }) => {
+    allMassstab: async (obj, { iddisziplin, klassenStufe }, { db, permission }) => {
       permission.check({ rolle: permission.LEITER });
 
-      if (iddisziplinen && klassenStufe) {
+      if (iddisziplin && klassenStufe) {
         const [rows] = await db.query(
-          `${select} WHERE klassen_stufe = ? AND iddisziplinen = ?`,
-          [klassenStufe, iddisziplinen],
+          'SELECT * FROM massstaebe WHERE klassenStufe = ? AND iddisziplin = ?',
+          [klassenStufe, iddisziplin],
         );
         return rows;
-      } if (iddisziplinen) {
-        const [rows] = await db.query(`${select} WHERE iddisziplinen = ?`, [iddisziplinen]);
+      } if (iddisziplin) {
+        const [rows] = await db.query('SELECT * FROM massstaebe WHERE iddisziplinen = ?', [iddisziplin]);
         return rows;
       } if (klassenStufe) {
-        const [rows] = await db.query(`${select} WHERE klassen_stufe = ?`, [klassenStufe]);
+        const [rows] = await db.query('SELECT * FROM massstaebe WHERE klassenStufe = ?', [klassenStufe]);
         return rows;
       }
-      const [rows] = await db.query(select);
+      const [rows] = await db.query('SELECT * FROM massstaebe');
       return rows;
     },
     massstab: async (obj, { geschlecht, iddisziplinen, klassenStufe }, { db, permission }) => {
       permission.check({ rolle: permission.LEITER });
 
       const [rows] = await db.query(
-        `${select} WHERE geschlecht = ? AND iddisziplinen = ? AND klassen_stufe = ?`,
+        'SELECT * FROM massstaebe WHERE geschlecht = ? AND iddisziplin = ? AND klassenStufe = ?',
         [geschlecht, iddisziplinen, klassenStufe],
       );
-
       return rows;
     },
   },
@@ -40,8 +36,6 @@ export default {
       permission.check({ rolle: permission.ADMIN });
 
       const massstab = { ...args };
-      set(massstab, 'klassen_stufe', massstab.klassenStufe);
-      delete massstab.klassenStufe;
 
       const [res] = await db.query('INSERT INTO massstaebe SET ?', massstab);
 
@@ -50,7 +44,7 @@ export default {
     deleteMassstab: async (obj, { id }, { db, permission }) => {
       permission.check({ rolle: permission.ADMIN });
 
-      const [res] = await db.query('DELETE FROM massstaebe WHERE idmassstaebe = ?', [id]);
+      const [res] = await db.query('DELETE FROM massstaebe WHERE id = ?', [id]);
 
       if (res.affectedRows > 0) {
         return { id };
@@ -61,17 +55,15 @@ export default {
       permission.check({ rolle: permission.ADMIN });
 
       const massstab = { ...args };
-      set(massstab, 'klassen_stufe', massstab.klassenStufe);
       delete massstab.id;
-      delete massstab.klassenStufe;
 
-      const [res] = await db.query('UPDATE massstaebe SET ? WHERE idmassstaebe = ?', [massstab, args.id]);
-      if (res.affectedRows < 1) {
-        throw new UserInputError('NOT_FOUND');
+      const [res] = await db.query('UPDATE massstaebe SET ? WHERE id = ?', [massstab, args.id]);
+
+      if (res.affectedRows > 0) {
+        const [row] = await db.query('SELECT * FROM massstaebe WHERE id = ?', [args.id]);
+        return row[0];
       }
-
-      const [row] = await db.query(`${select} WHERE idmassstaebe = ?`, [args.id]);
-      return row[0];
+      throw new UserInputError('NOT_FOUND');
     },
   },
 };
