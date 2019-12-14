@@ -15,7 +15,7 @@ export default gql`
     }
 
     extend type Query {
-        allMassstab(iddisziplinen: Int, klassenStufe: Int): [Massstab!]
+        allMassstab(iddisziplin: Int, klassenStufe: Int): [Massstab!]
         massstab(geschlecht: Geschlecht!, klassenStufe: Int!, iddisziplin: Int!): [Massstab!]
     }
 
