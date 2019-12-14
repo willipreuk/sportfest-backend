@@ -17,6 +17,10 @@ export default gql`
     type DeletSchuelerPayload {
         id: Int!
     }
+    
+    type UploadSchuelerPayload {
+        schuelerCount: Int!
+    }
 
     extend type Query {
         allSchueler(idklasse: Int): [Schueler!]
@@ -27,5 +31,6 @@ export default gql`
         addSchueler(vorname: String!, nachname: String!, geschlecht: Geschlecht, idklasse: Int!): Schueler!
         deleteSchueler(id: Int!): DeletSchuelerPayload!
         updateSchueler(id: Int!, vorname: String, nachname: String, geschlecht: Geschlecht, idklasse: Int): Schueler!
+        uploadSchueler(file: Upload!): UploadSchuelerPayload!
     }
 `;
