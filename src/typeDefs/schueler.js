@@ -25,7 +25,7 @@ export default gql`
     
     extend type Mutation {
         addSchueler(vorname: String!, nachname: String!, geschlecht: Geschlecht, idklasse: Int!): Schueler!
-        deleteSchueler(id: Int!): DeletSchuelerPayload
-        updateSchueler(id: Int!, vorname: String, nachname: String, geschlecht: Geschlecht, idklasse: Int): Schueler
+        deleteSchueler(id: Int!): DeletSchuelerPayload!
+        updateSchueler(id: Int!, vorname: String, nachname: String, geschlecht: Geschlecht, idklasse: Int): Schueler!
     }
 `;

@@ -82,13 +82,13 @@ export default {
         );
       }
 
-      const [rows] = await db.query('UPDATE user SET ? WHERE id = ?', [newUser, args.id]);
-      if (rows.affectedRows < 1) {
-        throw new UserInputError('NOT_FOUND');
-      }
+      const [res] = await db.query('UPDATE user SET ? WHERE id = ?', [newUser, args.id]);
 
-      const [res] = await db.query('SELECT id, username, rolle, FROM user WHERE id = ? ', [args.id]);
-      return res[0];
+      if (res.affectedRows > 0) {
+        const [rows] = await db.query('SELECT id, username, rolle, FROM user WHERE id = ? ', [args.id]);
+        return rows[0];
+      }
+      throw new UserInputError('NOT_FOUND');
     },
   },
 };

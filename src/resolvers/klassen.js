@@ -38,6 +38,7 @@ export default {
       permission.check({ rolle: permission.ADMIN });
 
       const [res] = await db.query('DELETE FROM klassen WHERE id = ?', [id]);
+
       if (res.affectedRows > 0) {
         return { id };
       }
@@ -50,12 +51,12 @@ export default {
       delete user.id;
 
       const [res] = await db.query('UPDATE klassen SET ? WHERE id = ?', [user, args.id]);
-      if (res.affectedRows < 1) {
-        throw new UserInputError('NOT_FOUND');
-      }
 
-      const [rows] = await db.query('SELECT *  FROM klassen WHERE id = ? ', [args.id]);
-      return rows[0];
+      if (res.affectedRows > 0) {
+        const [rows] = await db.query('SELECT *  FROM klassen WHERE id = ? ', [args.id]);
+        return rows[0];
+      }
+      throw new UserInputError('NOT_FOUND');
     },
   },
 };

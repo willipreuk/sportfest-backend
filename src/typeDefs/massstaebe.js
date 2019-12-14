@@ -21,7 +21,7 @@ export default gql`
 
     extend type Mutation {
         addMassstab(iddisziplin: Int!, geschlecht: Geschlecht!, punkte: Int!, werte: Float!, klassenStufe: Int!): Massstab!
-        updateMassstab(id: Int!, iddisziplin: Int, geschlecht: Geschlecht, punkte: Int, werte: Float, klassenStufe: Int): Massstab
-        deleteMassstab(id: Int!): DeleteMassstabPayload
+        updateMassstab(id: Int!, iddisziplin: Int, geschlecht: Geschlecht, punkte: Int, werte: Float, klassenStufe: Int): Massstab!
+        deleteMassstab(id: Int!): DeleteMassstabPayload!
     }
 `;

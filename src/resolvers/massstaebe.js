@@ -58,12 +58,12 @@ export default {
       delete massstab.id;
 
       const [res] = await db.query('UPDATE massstaebe SET ? WHERE id = ?', [massstab, args.id]);
-      if (res.affectedRows < 1) {
-        throw new UserInputError('NOT_FOUND');
-      }
 
-      const [row] = await db.query('SELECT * FROM massstaebe WHERE id = ?', [args.id]);
-      return row[0];
+      if (res.affectedRows > 0) {
+        const [row] = await db.query('SELECT * FROM massstaebe WHERE id = ?', [args.id]);
+        return row[0];
+      }
+      throw new UserInputError('NOT_FOUND');
     },
   },
 };

@@ -57,12 +57,11 @@ export default {
 
       const [res] = await db.query('UPDATE disziplinen SET ? WHERE id = ?', [disziplin, args.id]);
 
-      if (res.affectedRows < 1) {
-        throw new UserInputError('NOT_FOUND');
+      if (res.affectedRows > 0) {
+        const [rows] = await db.query('SELECT * FROM disziplinen WHERE id = ? ', [args.id]);
+        return rows[0];
       }
-
-      const [rows] = await db.query('SELECT * FROM disziplinen WHERE id = ? ', [args.id]);
-      return rows[0];
+      throw new UserInputError('NOT_FOUND');
     },
   },
 };
