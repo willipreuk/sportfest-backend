@@ -20,11 +20,7 @@ export default {
       permission.check({ rolle: permission.SCHREIBER });
 
       const [rows] = await db.query('SELECT * FROM ergebnisse WHERE id = ?', [id]);
-
-      if (rows.length > 0) {
-        return rows[0];
-      }
-      throw new UserInputError('NOT_FOUND');
+      return rows[0];
     },
   },
   Mutation: {

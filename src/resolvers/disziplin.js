@@ -29,9 +29,6 @@ export default {
       permission.check({ rolle: permission.ADMIN });
 
       const [rows] = await db.query('SELECT * FROM disziplinen WHERE id = ?', [id]);
-      if (rows.length === 0) {
-        throw new UserInputError('NOT_FOUND');
-      }
       return rows[0];
     },
   },

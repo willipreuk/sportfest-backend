@@ -28,7 +28,6 @@ export default {
         'SELECT * FROM massstaebe WHERE geschlecht = ? AND iddisziplin = ? AND klassenStufe = ?',
         [geschlecht, iddisziplinen, klassenStufe],
       );
-
       return rows;
     },
   },
