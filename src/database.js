@@ -1,16 +1,18 @@
-import mysql from 'mysql';
+import mysql from 'mysql2';
 
-// eslint-disable-next-line
-let connection;
-
-export const initDB = () => {
-  connection = mysql.createConnection({
+export default () => {
+  let connection = mysql.createPool({
     host: 'localhost',
     user: 'sportfest-DEV',
     password: 'password',
     database: 'sportfestDEV',
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0,
   });
-  connection.connect();
-};
+  connection = connection.promise();
 
-export default connection;
+  // eslint-disable-next-line no-console
+  console.log('🚀  MYSQL Pool ready');
+  return connection;
+};

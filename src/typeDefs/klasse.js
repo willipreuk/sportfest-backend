@@ -7,6 +7,10 @@ export default gql`
         name: Int!
     }
 
+    type DeleteKlassePayload {
+        id: Int!
+    }
+
     extend type Query {
         allklassen(stufe: Int): [Klasse!]
         klasse(id: Int!): Klasse
@@ -14,7 +18,7 @@ export default gql`
 
     extend type Mutation {
         addKlasse(stufe: Int!, name: Int!): Klasse!
-        deleteKlasse(id: Int!): Klasse
-        updateKlasse(stufe: Int, klasse: Int): Klasse
+        deleteKlasse(id: Int!): DeleteKlassePayload!
+        updateKlasse(id: Int!, stufe: Int, name: Int): Klasse!
     }
 `;
