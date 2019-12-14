@@ -1,4 +1,14 @@
 import { UserInputError } from 'apollo-server';
+import csvparser from 'csv-parse';
+
+const parseCSV = (stream) => new Promise(((resolve, reject) => {
+  const parser = csvparser({ delimiter: ';' }, (err, data) => {
+    if (err) reject(err);
+    if (data) resolve(data);
+    parser.end();
+  });
+  stream.pipe(parser);
+}));
 
 export default {
   Ergebnis: {
@@ -67,6 +77,17 @@ export default {
         return rows[0];
       }
       throw new UserInputError('NOT_FOUND');
+    },
+    uploadSchueler: async (obj, { file }, { db, permission }) => {
+      permission.check({ rolle: permission.ADMIN });
+
+      const { createReadStream, mimetype } = await file;
+
+      if (mimetype !== 'text/csv') throw new UserInputError('MIMETYPE_NOT_SUPPORTED');
+
+      const stream = createReadStream();
+
+      const data = await parseCSV(stream);
     },
   },
 };
