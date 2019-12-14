@@ -3,7 +3,7 @@ import { UserInputError } from 'apollo-server';
 const disziplinRootQuery = async (obj, args, { db, permission }) => {
   permission.check({ rolle: permission.SCHREIBER });
 
-  const [rows] = await db.query('SELECT iddisziplinen as id, name FROM disziplinen WHERE iddisziplinen = ?', [obj.iddisziplinen]);
+  const [rows] = await db.query('SELECT * FROM disziplinen WHERE id = ?', [obj.iddisziplin]);
   return rows[0];
 };
 
@@ -19,16 +19,16 @@ export default {
       permission.check({ rolle: permission.ADMIN });
 
       if (name) {
-        const [rows] = await db.query('SELECT name, iddisziplinen as id FROM disziplinen WHERE name = ?', [name]);
+        const [rows] = await db.query('SELECT * FROM disziplinen WHERE name = ?', [name]);
         return rows;
       }
-      const [rows] = await db.query('SELECT name, iddisziplinen as id FROM disziplinen');
+      const [rows] = await db.query('SELECT * FROM disziplinen');
       return rows;
     },
     disziplin: async (obj, { id }, { db, permission }) => {
       permission.check({ rolle: permission.ADMIN });
 
-      const [rows] = await db.query('SELECT iddisziplinen as id, name FROM disziplinen WHERE iddisziplinen = ?', [id]);
+      const [rows] = await db.query('SELECT * FROM disziplinen WHERE id = ?', [id]);
       if (rows.length === 0) {
         throw new UserInputError('NOT_FOUND');
       }
@@ -45,7 +45,7 @@ export default {
     deleteDisziplin: async (obj, { id }, { db, permission }) => {
       permission.check({ rolle: permission.ADMIN });
 
-      const [res] = await db.query('DELETE FROM disziplinen WHERE iddisziplinen = ?', [id]);
+      const [res] = await db.query('DELETE FROM disziplinen WHERE id = ?', [id]);
 
       if (res.affectedRows > 0) {
         return { id };
@@ -58,13 +58,13 @@ export default {
       const disziplin = { ...args };
       delete disziplin.id;
 
-      const [res] = await db.query('UPDATE disziplinen SET ? WHERE iddisziplinen = ?', [disziplin, args.id]);
+      const [res] = await db.query('UPDATE disziplinen SET ? WHERE id = ?', [disziplin, args.id]);
 
       if (res.affectedRows < 1) {
         throw new UserInputError('NOT_FOUND');
       }
 
-      const [rows] = await db.query('SELECT iddisziplinen as id, name FROM disziplinen WHERE iddisziplinen = ? ', [args.id]);
+      const [rows] = await db.query('SELECT * FROM disziplinen WHERE id = ? ', [args.id]);
       return rows[0];
     },
   },

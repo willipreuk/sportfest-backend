@@ -16,12 +16,12 @@ export default gql`
 
     extend type Query {
         allMassstab(iddisziplinen: Int, klassenStufe: Int): [Massstab!]
-        massstab(geschlecht: Geschlecht!, klassenStufe: Int!, iddisziplinen: Int!): [Massstab!]
+        massstab(geschlecht: Geschlecht!, klassenStufe: Int!, iddisziplin: Int!): [Massstab!]
     }
 
     extend type Mutation {
-        addMassstab(iddisziplinen: Int!, geschlecht: Geschlecht!, punkte: Int!, werte: Float!, klassenStufe: Int!): Massstab!
-        updateMassstab(id: Int!, iddisziplinen: Int, geschlecht: Geschlecht, punkte: Int, werte: Float, klassenStufe: Int): Massstab
+        addMassstab(iddisziplin: Int!, geschlecht: Geschlecht!, punkte: Int!, werte: Float!, klassenStufe: Int!): Massstab!
+        updateMassstab(id: Int!, iddisziplin: Int, geschlecht: Geschlecht, punkte: Int, werte: Float, klassenStufe: Int): Massstab
         deleteMassstab(id: Int!): DeleteMassstabPayload
     }
 `;
