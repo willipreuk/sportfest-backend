@@ -1,11 +1,17 @@
 import { gql } from 'apollo-server';
 
 export default gql`
+    type Auswertung {
+        disziplin: Disziplin!
+        wert: Float!
+        punkte: Int!
+    }
+    
     type AuswertungSchueler {
         schueler: Schueler!
         note: Int!
         punkte: Int!
-        ergebnisse: [Ergebnis!]
+        ergebnisse: [Auswertung!]
     }
     
     type AuswertungStufe {
