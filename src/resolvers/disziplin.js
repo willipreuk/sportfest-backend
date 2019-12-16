@@ -14,6 +14,9 @@ export default {
   Massstab: {
     disziplin: disziplinRootQuery,
   },
+  Auswertung: {
+    disziplin: disziplinRootQuery,
+  },
   Query: {
     allDisziplin: async (obj, { name }, { db, permission }) => {
       permission.check({ rolle: permission.ADMIN });
