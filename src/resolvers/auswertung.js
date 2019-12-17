@@ -1,4 +1,3 @@
-
 const auswertungSchueler = async (id, db) => {
   const [rows] = await db.query(
     'SELECT s.id, s.vorname, s.nachname, s.geschlecht, k.stufe, k.name FROM schueler s LEFT JOIN klassen k ON k.id = s.idklasse WHERE s.id = ?',
@@ -42,6 +41,17 @@ const auswertungSchueler = async (id, db) => {
   };
 };
 
+const auswertungStufe = async (klassen, geschlecht, db) => {
+  const res = [];
+  await Promise.all(klassen.map(async (k) => {
+    const [schuelerM] = await db.query('SELECT id FROM schueler WHERE idklasse = ? AND geschlecht = ?', [k.id, geschlecht]);
+    return Promise.all(schuelerM.map(async (s) => {
+      res.push(await auswertungSchueler(s.id, db));
+    }));
+  }));
+  return res;
+};
+
 export default {
   Query: {
     auswertungSchueler: async (obj, { id }, { db, permission }) => {
@@ -55,9 +65,23 @@ export default {
       const klasse = rows[0];
 
       const [schueler] = await db.query('SELECT id FROM schueler WHERE idklasse = ?', [klasse.id]);
-      const promises = schueler.map((s) => auswertungSchueler(s.id, db));
-      await Promise.all(promises);
-      return promises;
+      return schueler.map((s) => auswertungSchueler(s.id, db));
+    },
+    auswertungStufe: async (obj, { stufe }, { db, permission }) => {
+      permission.check({ rolle: permission.LEITER });
+
+      const [klassen] = await db.query('SELECT * FROM klassen WHERE stufe = ?', [stufe]);
+
+      const m = auswertungStufe(klassen, 'm', db);
+      const w = auswertungStufe(klassen, 'w', db);
+      const tmp = await Promise.all([m, w]);
+
+      const res = tmp.map((g) => g.sort((a, b) => b.punkte - a.punkte));
+      return {
+        stufe,
+        bestM: res[0],
+        bestW: res[1],
+      };
     },
   },
 };
