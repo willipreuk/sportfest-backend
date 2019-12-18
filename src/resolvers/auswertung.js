@@ -1,3 +1,5 @@
+import { flatten } from 'lodash';
+
 const auswertungSchueler = async (id, db) => {
   const [rows] = await db.query(
     'SELECT s.id, s.vorname, s.nachname, s.geschlecht, k.stufe, k.name FROM schueler s LEFT JOIN klassen k ON k.id = s.idklasse WHERE s.id = ?',
@@ -41,14 +43,20 @@ const auswertungSchueler = async (id, db) => {
   };
 };
 
-const auswertungStufe = async (klassen, geschlecht, db) => {
+const auswertungStufe = async (stufe, geschlecht, db) => {
+  const [klassen] = await db.query('SELECT * FROM klassen WHERE stufe = ?', [stufe]);
+
   const res = [];
-  await Promise.all(klassen.map(async (k) => {
-    const [schuelerM] = await db.query('SELECT id FROM schueler WHERE idklasse = ? AND geschlecht = ?', [k.id, geschlecht]);
-    return Promise.all(schuelerM.map(async (s) => {
-      res.push(await auswertungSchueler(s.id, db));
-    }));
-  }));
+  await Promise.all(
+    klassen.map(async (k) => {
+      const [schuelerM] = await db.query('SELECT id FROM schueler WHERE idklasse = ? AND geschlecht = ?', [k.id, geschlecht]);
+      return Promise.all(
+        schuelerM.map(async (s) => {
+          res.push(await auswertungSchueler(s.id, db));
+        }),
+      );
+    }),
+  );
   return res;
 };
 
@@ -70,17 +78,30 @@ export default {
     auswertungStufe: async (obj, { stufe }, { db, permission }) => {
       permission.check({ rolle: permission.LEITER });
 
-      const [klassen] = await db.query('SELECT * FROM klassen WHERE stufe = ?', [stufe]);
-
-      const m = auswertungStufe(klassen, 'm', db);
-      const w = auswertungStufe(klassen, 'w', db);
+      const m = auswertungStufe(stufe, 'm', db);
+      const w = auswertungStufe(stufe, 'w', db);
       const tmp = await Promise.all([m, w]);
 
       const res = tmp.map((g) => g.sort((a, b) => b.punkte - a.punkte));
       return {
-        stufe,
         bestM: res[0],
         bestW: res[1],
+      };
+    },
+    auswertungStufen: async (obj, { von, bis }, { db, permission }) => {
+      permission.check({ rolle: permission.LEITER });
+
+      const m = [];
+      const w = [];
+      for (let i = von; i <= bis; i += 1) {
+        m.push(auswertungStufe(i, 'm', db));
+        w.push(auswertungStufe(i, 'w', db));
+      }
+      const bestM = flatten(await Promise.all(m)).sort((a, b) => b.punkte - a.punkte);
+      const bestW = flatten(await Promise.all(w)).sort((a, b) => b.punkte - a.punkte);
+      return {
+        bestM,
+        bestW,
       };
     },
   },

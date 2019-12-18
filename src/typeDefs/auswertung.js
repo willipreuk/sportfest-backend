@@ -15,14 +15,11 @@ export default gql`
     }
     
     type AuswertungStufe {
-        stufe: Int!
         bestM: [AuswertungSchueler!]!
         bestW: [AuswertungSchueler!]!
     }
     
     type AuswertungStufen {
-        von: Int!
-        bis: Int!
         bestM: [AuswertungSchueler!]!
         bestW: [AuswertungSchueler!]!
     }
