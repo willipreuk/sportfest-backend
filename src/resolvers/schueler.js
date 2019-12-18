@@ -11,14 +11,19 @@ const parseCSV = (stream) => new Promise(((resolve, reject) => {
   stream.pipe(parser);
 }));
 
+const schuelerRootQuery = async (obj, args, { db, permission }) => {
+  permission.check({ rolle: permission.SCHREIBER });
+
+  const [rows] = await db.query('SELECT * FROM schueler WHERE id = ?', [obj.idschueler]);
+  return rows[0];
+};
+
 export default {
   Ergebnis: {
-    schueler: async (obj, args, { db, permission }) => {
-      permission.check({ rolle: permission.SCHREIBER });
-
-      const [rows] = await db.query('SELECT * FROM schueler WHERE id = ?', [obj.idschueler]);
-      return rows[0];
-    },
+    schueler: schuelerRootQuery,
+  },
+  AuswertungSchueler: {
+    schueler: schuelerRootQuery,
   },
   Query: {
     allSchueler: async (obj, { idklasse }, { db, permission }) => {
@@ -118,11 +123,10 @@ export default {
             counter += 1;
           });
           await Promise.all(klassenPromises);
-
-          await connection.commit();
         });
 
         await Promise.all(promises);
+        await connection.commit();
       } catch (e) {
         await connection.rollback();
         throw e;

@@ -6,6 +6,7 @@ import schuelerResolver from './schueler';
 import disziplinResolver from './disziplin';
 import ergebnisResolver from './ergebnis';
 import massstaebeResolver from './massstaebe';
+import auswertung from './auswertung';
 
 export default merge(
   userResolver,
@@ -14,4 +15,5 @@ export default merge(
   disziplinResolver,
   ergebnisResolver,
   massstaebeResolver,
+  auswertung,
 );
