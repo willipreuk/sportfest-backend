@@ -37,12 +37,12 @@ export default gql`
     type Query {
         allUser: [User!]
         user(username: String, id: Int): User
-        login(username: String!, password: String!): LoginPayload
     }
 
     type Mutation {
         addUser(username: String!, password: String!, rolle: Rolle!): CreateUserPayload!
         deleteUser(id: Int!): DeleteUserPayload!
         updateUser(id: Int!, username: String, password: String, rolle: Rolle): UpdateUserPayload!
+        login(username: String!, password: String!): LoginPayload
     }
 `;
