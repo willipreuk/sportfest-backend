@@ -14,7 +14,7 @@ export default gql`
         klasse: Klasse!
     }
     
-    type DeletSchuelerPayload {
+    type DeleteSchuelerPayload {
         id: Int!
     }
     
@@ -29,7 +29,7 @@ export default gql`
     
     extend type Mutation {
         addSchueler(vorname: String!, nachname: String!, geschlecht: Geschlecht, idklasse: Int!): Schueler!
-        deleteSchueler(id: Int!): DeletSchuelerPayload!
+        deleteSchueler(id: Int!): DeleteSchuelerPayload!
         updateSchueler(id: Int!, vorname: String, nachname: String, geschlecht: Geschlecht, idklasse: Int): Schueler!
         uploadSchueler(file: Upload!): UploadSchuelerPayload!
     }
