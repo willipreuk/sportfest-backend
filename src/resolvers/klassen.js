@@ -10,15 +10,19 @@ export default {
     },
   },
   Query: {
-    allklassen: async (obj, { stufe }, { db, permission }) => {
+    allKlassen: async (obj, { stufe, offset = 0, limit = 1000 }, { db, permission }) => {
       permission.check({ rolle: permission.LEITER });
 
       if (stufe) {
-        const [rows] = await db.query('SELECT * FROM klassen WHERE stufe = ?', [stufe]);
-        return rows;
+        const [rows] = await db.query('SELECT * FROM klassen WHERE stufe = ? LIMIT ?, ?', [stufe, offset, limit]);
+        const [total] = await db.query('SELECT COUNT(id) FROM klassen WHERE stufe = ?', [stufe]);
+
+        return { klassen: rows, total: total[0]['COUNT(id)'] };
       }
-      const [rows] = await db.query('SELECT * FROM klassen');
-      return rows;
+      const [rows] = await db.query('SELECT * FROM klassen LIMIT ?, ?', [offset, limit]);
+      const [total] = await db.query('SELECT COUNT(id) FROM klassen');
+
+      return { klassen: rows, total: total[0]['COUNT(id)'] };
     },
     klasse: async (obj, { id }, { db, permission }) => {
       permission.check({ rolle: permission.LEITER });
