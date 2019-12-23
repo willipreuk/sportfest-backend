@@ -64,6 +64,14 @@ const server = new ApolloServer(
     },
     typeDefs,
     resolvers,
+    formatResponse: (response) => {
+      console.log('response successful');
+      return response;
+    },
+    formatError: (error) => {
+      console.log(error);
+      return error;
+    },
   },
 );
 
