@@ -26,7 +26,10 @@ export default {
     schueler: schuelerRootQuery,
   },
   Query: {
-    allSchueler: async (obj, { idklasse, offset, limit }, { db, permission }) => {
+    allSchueler: async (
+      obj,
+      { idklasse, offset = 0, limit = Number.MAX_SAFE_INTEGER },
+      { db, permission }) => {
       permission.check({ rolle: permission.SCHREIBER });
 
       if (idklasse) {

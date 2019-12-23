@@ -10,7 +10,10 @@ export default {
     },
   },
   Query: {
-    allKlassen: async (obj, { stufe, offset = 0, limit = 1000 }, { db, permission }) => {
+    allKlassen: async (
+      obj,
+      { stufe, offset = 0, limit = Number.MAX_SAFE_INTEGER },
+      { db, permission }) => {
       permission.check({ rolle: permission.LEITER });
 
       if (stufe) {
