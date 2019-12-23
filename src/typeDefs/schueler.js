@@ -21,9 +21,14 @@ export default gql`
     type UploadSchuelerPayload {
         schuelerCount: Int!
     }
+    
+    type allSchuelerPayload {
+        total: Int
+        schueler: [Schueler!]
+    }
 
     extend type Query {
-        allSchueler(idklasse: Int): [Schueler!]
+        allSchueler(idklasse: Int, offset: Int, limit: Int): allSchuelerPayload
         schueler(id: Int!): Schueler
     }
     
