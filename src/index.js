@@ -65,7 +65,7 @@ const server = new ApolloServer(
     typeDefs,
     resolvers,
     formatResponse: (response) => {
-      console.log('response successful');
+      console.log(`${new Date().toLocaleTimeString()} response successful`);
       return response;
     },
     formatError: (error) => {

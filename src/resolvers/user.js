@@ -76,7 +76,7 @@ export default {
       throw new UserInputError('NOT_FOUND');
     },
     login: async (obj, { username, password }, { db }) => {
-      const [rows] = await db.query('SELECT password, id, rolle FROM user WHERE username = ?', [username]);
+      const [rows] = await db.query('SELECT password, id, rolle, username FROM user WHERE username = ?', [username]);
       if (rows.length < 1) {
         throw new AuthenticationError('NOT_FOUND');
       }
@@ -86,7 +86,8 @@ export default {
           { id: rows[0].id, rolle: rows[0].rolle },
           process.env.SECURITY_PRIVATE_KEY,
         );
-        return { jwt: token };
+        delete rows[0].password;
+        return { jwt: token, user: rows[0] };
       }
       throw new AuthenticationError('WRONG_PASSWORD');
     },
