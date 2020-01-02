@@ -9,9 +9,14 @@ export default gql`
     type DeleteDisziplinPayload {
         id: Int!
     }
+    
+    type allDisziplinPayload {
+        total: Int
+        disziplinen: [Disziplin!]
+    }
 
     extend type Query {
-        allDisziplin(name: String): [Disziplin!]
+        allDisziplin(name: String): allDisziplinPayload
         disziplin(id: Int!): Disziplin
     }
 

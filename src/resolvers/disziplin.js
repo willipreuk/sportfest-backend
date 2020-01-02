@@ -18,15 +18,22 @@ export default {
     disziplin: disziplinRootQuery,
   },
   Query: {
-    allDisziplin: async (obj, { name }, { db, permission }) => {
+    allDisziplin: async (
+      obj,
+      { name, offset = 0, limit = Number.MAX_SAFE_INTEGER },
+      { db, permission }) => {
       permission.check({ rolle: permission.ADMIN });
 
       if (name) {
-        const [rows] = await db.query('SELECT * FROM disziplinen WHERE name = ?', [name]);
-        return rows;
+        const [rows] = await db.query('SELECT * FROM disziplinen WHERE name = ? LIMIT ?, ?', [name, offset, limit]);
+        const [total] = await db.query('SELECT COUNT(id) FROM disziplinen WHERE name = ?', [name]);
+
+        return { total, disziplinen: rows };
       }
-      const [rows] = await db.query('SELECT * FROM disziplinen');
-      return rows;
+      const [rows] = await db.query('SELECT * FROM disziplinen LIMIT ?, ?', [offset, limit]);
+      const [total] = await db.query('SELECT COUNT(id) FROM disziplinen');
+
+      return { total, disziplinen: rows };
     },
     disziplin: async (obj, { id }, { db, permission }) => {
       permission.check({ rolle: permission.ADMIN });
