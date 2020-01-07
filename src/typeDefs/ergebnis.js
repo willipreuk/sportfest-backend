@@ -6,6 +6,7 @@ export default gql`
         wert: Float
         schueler: Schueler!
         disziplin: Disziplin!
+        allWerte: [Float!]
     }
     
     type DeleteErgebnisPayload {
@@ -14,6 +15,7 @@ export default gql`
 
     extend type Query {
         allErgebnis(idschueler: Int, iddisziplin: Int): [Ergebnis!]
+        allErgebnisByKlasse(idklasse: Int!, iddisziplin: Int!): [Ergebnis!]
         ergebnis(id: Int!): Ergebnis
     }
 

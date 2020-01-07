@@ -4,6 +4,8 @@ export default gql`
     type Disziplin {
         id: Int!
         name: String!
+        best: String!
+        einheit: String!
     }
     
     type DeleteDisziplinPayload {
