@@ -20,7 +20,7 @@ export default gql`
     }
 
     extend type Mutation {
-        updateErgebnis(wert: Float, idschueler: Int, iddisziplin: Int): Ergebnis!
+        updateErgebnis(wert: Float, idschueler: Int, iddisziplin: Int, allWerte: String): Ergebnis!
         deleteErgebnis(id: Int!): DeleteErgebnisPayload!
     }
 `;
