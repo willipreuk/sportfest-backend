@@ -65,12 +65,14 @@ export default {
           password,
           parseInt(process.env.SECURITY_SALT_ROUNDS, 10),
         );
+      } else {
+        delete newUser.password;
       }
 
       const [res] = await db.query('UPDATE user SET ? WHERE id = ?', [newUser, args.id]);
 
       if (res.affectedRows > 0) {
-        const [rows] = await db.query('SELECT id, username, rolle, FROM user WHERE id = ? ', [args.id]);
+        const [rows] = await db.query('SELECT id, username, rolle FROM user WHERE id = ? ', [args.id]);
         return rows[0];
       }
       throw new UserInputError('NOT_FOUND');
