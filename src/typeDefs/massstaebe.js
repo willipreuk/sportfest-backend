@@ -6,16 +6,21 @@ export default gql`
         disziplin: Disziplin!
         geschlecht: Geschlecht!
         punkte: Int!
-        wert: Float!
+        werte: Float!
         klassenStufe: Int!
     }
     
     type DeleteMassstabPayload {
         id: Int!
     }
+    
+    type AllMassstaebePayload {
+        total: Int!
+        massstaebe: [Massstab!]
+    }
 
     extend type Query {
-        allMassstab(iddisziplin: Int, klassenStufe: Int): [Massstab!]
+        allMassstaebe(iddisziplin: Int, klassenStufe: Int, offset: Int, limit: Int): AllMassstaebePayload
         massstab(geschlecht: Geschlecht!, klassenStufe: Int!, iddisziplin: Int!): [Massstab!]
     }
 
