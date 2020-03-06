@@ -8,6 +8,11 @@ export default gql`
         einheit: String!
     }
     
+    enum Best {
+      high
+      low
+    }
+    
     type DeleteDisziplinPayload {
         id: Int!
     }
@@ -18,13 +23,13 @@ export default gql`
     }
 
     extend type Query {
-        allDisziplin(name: String): allDisziplinPayload
+        allDisziplin(name: String, offset: Int, limit: Int): allDisziplinPayload
         disziplin(id: Int!): Disziplin
     }
 
     extend type Mutation {
-        addDisziplin(name: String!): Disziplin!
-        updateDisziplin(id: Int!, name: String): Disziplin!
+        addDisziplin(name: String!, best: Best!, einheit: String!): Disziplin!
+        updateDisziplin(id: Int!, name: String, best: Best, einheit: String): Disziplin!
         deleteDisziplin(id: Int!): DeleteDisziplinPayload!
     }
 `;

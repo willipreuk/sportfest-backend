@@ -28,12 +28,12 @@ export default {
         const [rows] = await db.query('SELECT * FROM disziplinen WHERE name = ? LIMIT ?, ?', [name, offset, limit]);
         const [total] = await db.query('SELECT COUNT(id) FROM disziplinen WHERE name = ?', [name]);
 
-        return { total, disziplinen: rows };
+        return { total: total[0]['COUNT(id)'], disziplinen: rows };
       }
       const [rows] = await db.query('SELECT * FROM disziplinen LIMIT ?, ?', [offset, limit]);
       const [total] = await db.query('SELECT COUNT(id) FROM disziplinen');
 
-      return { total, disziplinen: rows };
+      return { total: total[0]['COUNT(id)'], disziplinen: rows };
     },
     disziplin: async (obj, { id }, { db, permission }) => {
       permission.check({ rolle: permission.ADMIN });
