@@ -2,24 +2,30 @@ import { UserInputError } from 'apollo-server';
 
 export default {
   Query: {
-    allMassstab: async (obj, { iddisziplin, klassenStufe }, { db, permission }) => {
+    allMassstaebe: async (obj, {
+      iddisziplin, klassenStufe, offset = 0, limit = Number.MAX_SAFE_INTEGER,
+    }, { db, permission }) => {
       permission.check({ rolle: permission.LEITER });
 
       if (iddisziplin && klassenStufe) {
         const [rows] = await db.query(
-          'SELECT * FROM massstaebe WHERE klassenStufe = ? AND iddisziplin = ?',
-          [klassenStufe, iddisziplin],
+          'SELECT * FROM massstaebe WHERE klassenStufe = ? AND iddisziplin = ? LIMIT ?, ?',
+          [klassenStufe, iddisziplin, offset, limit],
         );
-        return rows;
+        const [total] = await db.query('SELECT COUNT(id) FROM massstaebe WHERE klassenStufe = ? AND iddisziplin = ?', [klassenStufe, iddisziplin]);
+        return { massstaebe: rows, total: total[0]['COUNT(id)'] };
       } if (iddisziplin) {
-        const [rows] = await db.query('SELECT * FROM massstaebe WHERE iddisziplinen = ?', [iddisziplin]);
-        return rows;
+        const [rows] = await db.query('SELECT * FROM massstaebe WHERE iddisziplin = ? LIMIT ?, ?', [iddisziplin, offset, limit]);
+        const [total] = await db.query('SELECT COUNT(id) FROM massstaebe WHERE iddisziplin = ?', [iddisziplin]);
+        return { massstaebe: rows, total: total[0]['COUNT(id)'] };
       } if (klassenStufe) {
-        const [rows] = await db.query('SELECT * FROM massstaebe WHERE klassenStufe = ?', [klassenStufe]);
-        return rows;
+        const [rows] = await db.query('SELECT * FROM massstaebe WHERE klassenStufe = ? LIMIT ?, ?', [klassenStufe, offset, limit]);
+        const [total] = await db.query('SELECT COUNT(id) FROM massstaebe WHERE klassenStufe = ?', [klassenStufe]);
+        return { massstaebe: rows, total: total[0]['COUNT(id)'] };
       }
-      const [rows] = await db.query('SELECT * FROM massstaebe');
-      return rows;
+      const [rows] = await db.query('SELECT * FROM massstaebe LIMIT ?, ?', [offset, limit]);
+      const [total] = await db.query('SELECT COUNT(id) FROM massstaebe');
+      return { massstaebe: rows, total: total[0]['COUNT(id)'] };
     },
     massstab: async (obj, { geschlecht, iddisziplinen, klassenStufe }, { db, permission }) => {
       permission.check({ rolle: permission.LEITER });

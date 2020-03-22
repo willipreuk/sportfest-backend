@@ -32,6 +32,7 @@ export default gql`
 
     type LoginPayload {
         jwt: String!
+        user: User!
     }
 
     type Query {

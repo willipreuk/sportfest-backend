@@ -10,9 +10,14 @@ export default gql`
     type DeleteKlassePayload {
         id: Int!
     }
+    
+    type allKlassenPayload {
+        total: Int!
+        klassen: [Klasse!]
+    }
 
     extend type Query {
-        allklassen(stufe: Int): [Klasse!]
+        allKlassen(stufe: Int, offset: Int, limit: Int): allKlassenPayload!
         klasse(id: Int!): Klasse
     }
 

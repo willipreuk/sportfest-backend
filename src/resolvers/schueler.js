@@ -26,18 +26,25 @@ export default {
     schueler: schuelerRootQuery,
   },
   Query: {
-    allSchueler: async (obj, { idklasse }, { db, permission }) => {
+    allSchueler: async (
+      obj,
+      { idklasse, offset = 0, limit = Number.MAX_SAFE_INTEGER },
+      { db, permission }) => {
       permission.check({ rolle: permission.SCHREIBER });
 
       if (idklasse) {
         const [rows] = await db.query(
-          'SELECT * FROM schueler WHERE idklasse = ?',
-          [idklasse],
+          'SELECT * FROM schueler WHERE idklasse = ? LIMIT ?, ?',
+          [idklasse, offset, limit],
         );
-        return rows;
+        const [total] = await db.query('SELECT COUNT(id) FROM schueler WHERE idklasse = ?', [idklasse]);
+
+        return { schueler: rows, total: total[0]['COUNT(id)'] };
       }
-      const [rows] = await db.query('SELECT * FROM schueler');
-      return rows;
+      const [rows] = await db.query('SELECT * FROM schueler LIMIT ?, ?', [offset, limit]);
+      const [total] = await db.query('SELECT COUNT(id) FROM schueler', [idklasse]);
+
+      return { schueler: rows, total: total[0]['COUNT(id)'] };
     },
     schueler: async (obj, { id }, { db, permission }) => {
       permission.check({ rolle: permission.SCHREIBER });
@@ -79,7 +86,7 @@ export default {
       const [res] = await db.query('UPDATE schueler SET ? WHERE id = ?', [schueler, args.id]);
 
       if (res.affectedRows > 0) {
-        const [rows] = await db.query('SELECT + FROM schueler WHERE id = ? ', [args.id]);
+        const [rows] = await db.query('SELECT * FROM schueler WHERE id = ? ', [args.id]);
         return rows[0];
       }
       throw new UserInputError('NOT_FOUND');
