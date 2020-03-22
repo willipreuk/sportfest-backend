@@ -69,7 +69,7 @@ const server = new ApolloServer(
       return response;
     },
     formatError: (error) => {
-      console.log(error);
+      console.error(error);
       return error;
     },
   },
