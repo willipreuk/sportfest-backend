@@ -1,32 +1,3 @@
-create table disziplinen
-(
-    id      int auto_increment
-        primary key,
-    name    varchar(255) not null,
-    best    varchar(255) not null,
-    einheit varchar(10)  not null
-);
-
-INSERT INTO sportfest.disziplinen (id, name, best, einheit) VALUES (1, '60m Sprint', 'low', 's');
-INSERT INTO sportfest.disziplinen (id, name, best, einheit) VALUES (2, 'Dreier Hopp', 'high', 'm');
-INSERT INTO sportfest.disziplinen (id, name, best, einheit) VALUES (3, 'Medizinball Stoßen', 'high', 'm');
-INSERT INTO sportfest.disziplinen (id, name, best, einheit) VALUES (4, 'Schlängellauf', 'low', 's');
-create table ergebnisse
-(
-    id          int auto_increment
-        primary key,
-    idschueler  int          not null,
-    iddisziplin int          not null,
-    wert        varchar(255) not null,
-    constraint `disziplin-ergebnisse___fk`
-        foreign key (iddisziplin) references disziplinen (id)
-            on update cascade on delete cascade,
-    constraint `schueler-ergebnisse___fk`
-        foreign key (idschueler) references schueler (id)
-            on update cascade on delete cascade
-);
-
-
 create table klassen
 (
     id    int auto_increment
@@ -64,6 +35,41 @@ INSERT INTO sportfest.klassen (id, stufe, name) VALUES (23, 10, 2);
 INSERT INTO sportfest.klassen (id, stufe, name) VALUES (24, 10, 3);
 INSERT INTO sportfest.klassen (id, stufe, name) VALUES (25, 10, 4);
 INSERT INTO sportfest.klassen (id, stufe, name) VALUES (26, 10, 5);
+
+
+
+create table schueler
+(
+    id         int auto_increment
+        primary key,
+    vorname    varchar(255)   not null,
+    nachname   varchar(255)   not null,
+    geschlecht set ('m', 'w') not null,
+    idklasse   int            not null,
+    status     varchar(255)   null,
+    constraint `klasse-schueler___fk`
+        foreign key (idklasse) references klassen (id)
+            on update cascade on delete cascade
+);
+
+
+
+create table disziplinen
+(
+    id      int auto_increment
+        primary key,
+    name    varchar(255) not null,
+    best    varchar(255) not null,
+    einheit varchar(10)  not null
+);
+
+INSERT INTO sportfest.disziplinen (id, name, best, einheit) VALUES (1, '60m Sprint', 'low', 's');
+INSERT INTO sportfest.disziplinen (id, name, best, einheit) VALUES (2, 'Dreier Hopp', 'high', 'm');
+INSERT INTO sportfest.disziplinen (id, name, best, einheit) VALUES (3, 'Medizinball Stoßen', 'high', 'm');
+INSERT INTO sportfest.disziplinen (id, name, best, einheit) VALUES (4, 'Schlängellauf', 'low', 's');
+
+
+
 create table massstaebe
 (
     id           int auto_increment
@@ -6815,19 +6821,25 @@ INSERT INTO sportfest.massstaebe (id, iddisziplin, klassenStufe, geschlecht, pun
 INSERT INTO sportfest.massstaebe (id, iddisziplin, klassenStufe, geschlecht, punkte, werte) VALUES (6733, 4, 10, 'm', 2, 15.7);
 INSERT INTO sportfest.massstaebe (id, iddisziplin, klassenStufe, geschlecht, punkte, werte) VALUES (6734, 4, 10, 'm', 1, 15.9);
 INSERT INTO sportfest.massstaebe (id, iddisziplin, klassenStufe, geschlecht, punkte, werte) VALUES (6735, 4, 10, 'm', 0, 16);
-create table schueler
+
+
+
+create table ergebnisse
 (
-    id         int auto_increment
+    id          int auto_increment
         primary key,
-    vorname    varchar(255)   not null,
-    nachname   varchar(255)   not null,
-    geschlecht set ('m', 'w') not null,
-    idklasse   int            not null,
-    status     varchar(255)   null,
-    constraint `klasse-schueler___fk`
-        foreign key (idklasse) references klassen (id)
+    idschueler  int          not null,
+    iddisziplin int          not null,
+    wert        varchar(255) not null,
+    constraint `disziplin-ergebnisse___fk`
+        foreign key (iddisziplin) references disziplinen (id)
+            on update cascade on delete cascade,
+    constraint `schueler-ergebnisse___fk`
+        foreign key (idschueler) references schueler (id)
             on update cascade on delete cascade
 );
+
+
 
 create table user
 (
