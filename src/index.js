@@ -7,8 +7,6 @@ import resolvers from './resolvers';
 
 dotenv.config();
 
-const db = initDB();
-
 const checkPermission = (userCtx) => (checks) => {
   const rollen = {
     admin: ['admin'],
@@ -33,47 +31,51 @@ const checkPermission = (userCtx) => (checks) => {
   }
 };
 
-const server = new ApolloServer(
-  {
-    context: async ({ req }) => {
-      const token = req.headers.authorization || '';
+(async () => {
+  const db = await initDB();
 
-      try {
-        const data = jwt.verify(token, process.env.SECURITY_PRIVATE_KEY);
-        const [rows] = await db.query('SELECT rolle, id, username FROM user WHERE id = ?', [data.id]);
-        const userObj = { ...rows[0] };
-        return {
-          db,
-          permission: {
-            check: checkPermission(userObj), ADMIN: 'admin', SCHREIBER: 'schreiber', LEITER: 'leiter',
-          },
-          user: userObj,
-        };
-      } catch (e) {
-        if (e instanceof JsonWebTokenError) {
+  const server = new ApolloServer(
+    {
+      context: async ({ req }) => {
+        const token = req.headers.authorization || '';
+
+        try {
+          const data = jwt.verify(token, process.env.SECURITY_PRIVATE_KEY);
+          const [rows] = await db.query('SELECT rolle, id, username FROM user WHERE id = ?', [data.id]);
+          const userObj = { ...rows[0] };
           return {
             db,
             permission: {
-              check: checkPermission(null), ADMIN: 'admin', SCHREIBER: 'schreiber', LEITER: 'leiter',
+              check: checkPermission(userObj), ADMIN: 'admin', SCHREIBER: 'schreiber', LEITER: 'leiter',
             },
-            user: null,
+            user: userObj,
           };
+        } catch (e) {
+          if (e instanceof JsonWebTokenError) {
+            return {
+              db,
+              permission: {
+                check: checkPermission(null), ADMIN: 'admin', SCHREIBER: 'schreiber', LEITER: 'leiter',
+              },
+              user: null,
+            };
+          }
+          throw e;
         }
-        throw e;
-      }
+      },
+      typeDefs,
+      resolvers,
+      formatResponse: (response) => {
+        console.log(`${new Date().toLocaleTimeString()} response successful`);
+        return response;
+      },
+      formatError: (error) => {
+        console.error(error);
+        return error;
+      },
     },
-    typeDefs,
-    resolvers,
-    formatResponse: (response) => {
-      console.log(`${new Date().toLocaleTimeString()} response successful`);
-      return response;
-    },
-    formatError: (error) => {
-      console.error(error);
-      return error;
-    },
-  },
-);
+  );
 
-// eslint-disable-next-line no-console
-server.listen().then(({ url }) => console.log(`🚀  GraphQL Server ready at ${url}`));
+  // eslint-disable-next-line no-console
+  server.listen().then(({ url }) => console.log(`🚀  GraphQL Server ready at ${url}`));
+})();
