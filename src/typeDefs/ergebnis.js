@@ -7,6 +7,7 @@ export default gql`
         schueler: Schueler!
         disziplin: Disziplin!
         allWerte: [Float!]
+        status: String
     }
     
     type DeleteErgebnisPayload {
@@ -20,7 +21,7 @@ export default gql`
     }
 
     extend type Mutation {
-        updateErgebnis(wert: Float, idschueler: Int, iddisziplin: Int, allWerte: String): Ergebnis!
+        updateErgebnis(wert: Float, idschueler: Int, iddisziplin: Int, allWerte: String, status: String): Ergebnis!
         deleteErgebnis(id: Int!): DeleteErgebnisPayload!
     }
 `;
