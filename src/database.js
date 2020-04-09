@@ -22,13 +22,13 @@ export default async () => {
   connection = connection.promise();
 
   try {
-    const tables = await connection.query('SELECT COUNT(TABLE_NAME) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME IN (\'klassen\', \'user\', \'schueler\', \'disziplinen\', \'massstaebe\', \'ergebnisse\');');
+    const tables = await connection.query('SELECT COUNT(TABLE_NAME) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME IN (\'klassen\', \'user\', \'schueler\', \'disziplinen\', \'massstaebe\', \'ergebnisse\', \'noten_massstaebe\');');
     if (tables[0][0]['COUNT(TABLE_NAME)'] === 0) {
       console.log('creating tables');
       const defaultSQL = await readDefaultSQL();
       await connection.query(defaultSQL);
       console.log('done creating tables');
-    } else if (tables[0][0]['COUNT(TABLE_NAME)'] > 0 && tables[0][0]['COUNT(TABLE_NAME)'] < 6) {
+    } else if (tables[0][0]['COUNT(TABLE_NAME)'] > 0 && tables[0][0]['COUNT(TABLE_NAME)'] < 7) {
       console.error('only some databases exist - existing to prevent overwrite');
       process.exit(1);
     }
