@@ -1,4 +1,4 @@
-import { flatten } from 'lodash';
+import { flatten, meanBy, round } from 'lodash';
 
 const calcNote = (punkte, notenMassstaebe) => {
   for (let i = 0; i < notenMassstaebe.length; i += 1) {
@@ -96,7 +96,17 @@ export default {
       const klasse = rows[0];
 
       const [schueler] = await db.query('SELECT id FROM schueler WHERE idklasse = ?', [klasse.id]);
-      return schueler.map((s) => auswertungSchueler(s.id, db));
+
+      const schuelerErgebnisse = await Promise.all(
+        schueler.map((s) => auswertungSchueler(s.id, db)),
+      );
+
+      return {
+        schueler: schuelerErgebnisse,
+        durchschnitt: round(
+          meanBy(schuelerErgebnisse, (schuelerErgebniss) => schuelerErgebniss.punkte), 2,
+        ),
+      };
     },
     auswertungStufe: async (obj, { stufe }, { db, permission }) => {
       permission.check({ rolle: permission.LEITER });
