@@ -1,3 +1,15 @@
+create table noten_massstaebe
+(
+    id           int auto_increment
+        primary key,
+    note         int not null,
+    durchschnitt int not null,
+    constraint noten_massstaebe_durchschnitt_uindex
+        unique (durchschnitt),
+    constraint noten_massstaebe_note_uindex
+        unique (note)
+);
+
 create table disziplinen
 (
 	id int auto_increment
@@ -77,6 +89,13 @@ create table user
 );
 
 
+
+INSERT INTO sportfest.noten_massstaebe (id, note, durchschnitt) VALUES (1, 6, 0);
+INSERT INTO sportfest.noten_massstaebe (id, note, durchschnitt) VALUES (2, 5, 5);
+INSERT INTO sportfest.noten_massstaebe (id, note, durchschnitt) VALUES (3, 4, 15);
+INSERT INTO sportfest.noten_massstaebe (id, note, durchschnitt) VALUES (4, 3, 25);
+INSERT INTO sportfest.noten_massstaebe (id, note, durchschnitt) VALUES (5, 2, 41);
+INSERT INTO sportfest.noten_massstaebe (id, note, durchschnitt) VALUES (6, 1, 55);
 
 INSERT INTO sportfest.klassen (id, stufe, name) VALUES (1, 5, 1);
 INSERT INTO sportfest.klassen (id, stufe, name) VALUES (2, 5, 2);
