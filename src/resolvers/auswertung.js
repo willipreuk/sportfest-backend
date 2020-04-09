@@ -9,24 +9,35 @@ const auswertungSchueler = async (id, db) => {
 
   const [ergebnisse] = await db.query('SELECT * FROM ergebnisse WHERE idschueler = ?', [id]);
 
-  const promises = ergebnisse.map(async (e) => {
-    const [massstaebe] = await db.query(
-      'SELECT werte, punkte FROM massstaebe WHERE iddisziplin = ? AND klassenStufe = ? AND geschlecht = ?',
-      [e.iddisziplin, schueler.stufe, schueler.geschlecht],
-    );
-    const [disziplin] = await db.query('SELECT best FROM disziplinen WHERE id = ?', [e.iddisziplin]);
+  const promises = ergebnisse.map(async (ergebniss) => {
+    // Schüler verletzt und nicht mitgemacht an Station
+    if (ergebniss.wert !== null) {
+      const [massstaebe] = await db.query(
+        'SELECT werte, punkte FROM massstaebe WHERE iddisziplin = ? AND klassenStufe = ? AND geschlecht = ?',
+        [ergebniss.iddisziplin, schueler.stufe, schueler.geschlecht],
+      );
+      const [disziplin] = await db.query('SELECT best FROM disziplinen WHERE id = ?', [ergebniss.iddisziplin]);
 
-    for (let i = 0; i < massstaebe.length; i += 1) {
-      if (disziplin.best === 'high') {
-        if (e.wert > massstaebe[i].werte) {
-          return { wert: e.wert, punkte: massstaebe[i - 1].punkte, iddisziplin: e.iddisziplin };
+      for (let i = 0; i < massstaebe.length; i += 1) {
+        if (disziplin.best === 'high') {
+          if (ergebniss.wert > massstaebe[i].werte) {
+            return {
+              wert: ergebniss.wert,
+              punkte: massstaebe[i - 1].punkte,
+              iddisziplin: ergebniss.iddisziplin,
+            };
+          }
+        } else if (ergebniss.wert < massstaebe[i].werte) {
+          return {
+            wert: ergebniss.wert,
+            punkte: massstaebe[i - 1].punkte,
+            iddisziplin: ergebniss.iddisziplin,
+          };
         }
-      } else if (e.wert < massstaebe[i].werte) {
-        return { wert: e.wert, punkte: massstaebe[i - 1].punkte, iddisziplin: e.iddisziplin };
       }
     }
 
-    throw new Error('ERROR_CALC_POINTS');
+    return { wert: ergebniss.wert, punkte: 0, iddisziplin: ergebniss.iddisziplin };
   });
 
 
