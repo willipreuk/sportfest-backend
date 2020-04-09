@@ -11,22 +11,13 @@ const calcNote = (punkte, notenMassstaebe) => {
   return 6;
 };
 
-const auswertungSchueler = async (ergebnisse, massstaebe, notenMassstaebe) => {
-  const promises = ergebnisse.map(async (ergebniss) => {
+const auswertungSchueler = (ergebnisse, massstaebe, notenMassstaebe) => {
+  const res = ergebnisse.map((ergebniss) => {
     // Schüler verletzt und nicht mitgemacht an Station
     if (ergebniss.wert !== null) {
       const massstaebeDisziplin = massstaebe[ergebniss.iddisziplin];
-
       for (let i = 0; i < massstaebeDisziplin.length; i += 1) {
-        if (ergebniss.best === 'high') {
-          if (ergebniss.wert > massstaebeDisziplin[i].werte) {
-            return {
-              wert: ergebniss.wert,
-              punkte: massstaebeDisziplin[i - 1].punkte,
-              iddisziplin: ergebniss.iddisziplin,
-            };
-          }
-        } else if (ergebniss.wert < massstaebeDisziplin[i].werte) {
+        if (ergebniss.wert > massstaebeDisziplin[i].werte) {
           return {
             wert: ergebniss.wert,
             punkte: massstaebeDisziplin[i - 1].punkte,
@@ -39,34 +30,26 @@ const auswertungSchueler = async (ergebnisse, massstaebe, notenMassstaebe) => {
     return { wert: ergebniss.wert, punkte: 0, iddisziplin: ergebniss.iddisziplin };
   });
 
-
-  const res = await Promise.all(promises);
-  const summePunkte = res.reduce(
-    (a, b) => ({ punkte: a.punkte + b.punkte }), { punkte: 0 },
-  ).punkte;
-
-  const note = await calcNote(summePunkte, notenMassstaebe);
+  const averagePunkte = meanBy(res, ((r) => r.punkte));
+  const note = calcNote(averagePunkte, notenMassstaebe);
 
   return {
-    idschueler: ergebnisse[0].id,
+    idschueler: ergebnisse[0].idschueler,
     note,
-    punkte: summePunkte,
+    punkte: averagePunkte,
     ergebnisse: res,
   };
 };
 
 const auswertungStufe = async (stufe, geschlecht, db) => {
-  const [ergebnisse] = await db.query('SELECT wert, idschueler, best, s.status, iddisziplin, allWerte, e.id FROM ergebnisse e INNER JOIN schueler s on e.idschueler = s.id INNER JOIN klassen k on s.idklasse = k.id INNER JOIN disziplinen d on e.iddisziplin = d.id WHERE k.stufe = ? AND s.geschlecht = ? ORDER BY idschueler', [stufe, 'm']);
-  const [massstaebe] = await db.query('SELECT * FROM massstaebe WHERE klassenStufe = ? AND geschlecht = ?', [stufe, 'm']);
-  const [notenMassstaebe] = await db.query('SELECT * FROM noten_massstaebe');
+  const [ergebnisse] = await db.query('SELECT wert, idschueler, best, s.status, iddisziplin, allWerte, e.id FROM ergebnisse e INNER JOIN schueler s on e.idschueler = s.id INNER JOIN klassen k on s.idklasse = k.id INNER JOIN disziplinen d on e.iddisziplin = d.id WHERE k.stufe = ? AND s.geschlecht = ? ORDER BY idschueler', [stufe, geschlecht]);
+  const [massstaebe] = await db.query('SELECT * FROM massstaebe WHERE klassenStufe = ? AND geschlecht = ? ORDER BY werte DESC', [stufe, geschlecht]);
+  const [notenMassstaebe] = await db.query('SELECT * FROM noten_massstaebe ORDER BY durchschnitt DESC');
 
   const schueler = groupBy(ergebnisse, (ergebiss) => ergebiss.idschueler);
   const massstaebeGrouped = groupBy(massstaebe, (massstab) => massstab.iddisziplin);
-  return Promise.all(
-    Object.values(schueler)
-      .map(
-        async (s) => auswertungSchueler(s, massstaebeGrouped, notenMassstaebe),
-      ),
+  return Object.values(schueler).map(
+    (s) => auswertungSchueler(s, massstaebeGrouped, notenMassstaebe),
   );
 };
 
@@ -88,7 +71,14 @@ export default {
   Query: {
     auswertungSchueler: async (obj, { id }, { db, permission }) => {
       permission.check({ rolle: permission.LEITER });
-      return auswertungSchueler(id, db);
+
+      const [ergebnisse] = await db.query('SELECT * FROM ergebnisse LEFT JOIN schueler s on ergebnisse.idschueler = s.id LEFT JOIN klassen k on s.idklasse = k.id WHERE idschueler = ?', [id]);
+      const [massstaebe] = await db.query('SELECT * FROM massstaebe WHERE klassenStufe = ? AND geschlecht = ? ORDER BY werte DESC', [ergebnisse[0].stufe, ergebnisse[0].geschlecht]);
+      const [notenMassstaebe] = await db.query('SELECT * FROM noten_massstaebe ORDER BY durchschnitt DESC');
+
+      const massstaebeGrouped = groupBy(massstaebe, (massstab) => massstab.iddisziplin);
+
+      return auswertungSchueler(ergebnisse, massstaebeGrouped, notenMassstaebe);
     },
     auswertungKlasse: async (obj, { id }, { db, permission }) => {
       permission.check({ rolle: permission.ADMIN });

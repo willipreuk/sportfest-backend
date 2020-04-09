@@ -4,13 +4,13 @@ export default gql`
     type Auswertung {
         disziplin: Disziplin!
         wert: Float!
-        punkte: Int!
+        punkte: Float!
     }
     
     type AuswertungSchueler {
         schueler: Schueler!
         note: Int!
-        punkte: Int!
+        punkte: Float!
         ergebnisse: [Auswertung!]
     }
 
