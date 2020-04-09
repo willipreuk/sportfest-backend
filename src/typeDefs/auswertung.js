@@ -13,6 +13,11 @@ export default gql`
         punkte: Int!
         ergebnisse: [Auswertung!]
     }
+
+    type AuswertungKlasse {
+        schueler: [AuswertungSchueler!]
+        durchschnitt: Float!
+    }
     
     type AuswertungStufe {
         bestM: [AuswertungSchueler!]!
@@ -22,10 +27,11 @@ export default gql`
     type AuswertungStufen {
         bestM: [AuswertungSchueler!]!
         bestW: [AuswertungSchueler!]!
+        besteKlassen: [AuswertungKlasse!]!
     }
   
     extend type Query {
-        auswertungKlasse(id: Int!): [AuswertungSchueler!]
+        auswertungKlasse(id: Int!): AuswertungKlasse
         auswertungSchueler(id: Int!): AuswertungSchueler
         auswertungStufe(stufe: Int!): AuswertungStufe
         auswertungStufen(von: Int!, bis: Int!): AuswertungStufen
