@@ -83,13 +83,19 @@ export default {
     auswertungKlasse: async (obj, { id }, { db, permission }) => {
       permission.check({ rolle: permission.ADMIN });
 
-      const [rows] = await db.query('SELECT * FROM klassen WHERE id = ?', [id]);
-      const klasse = rows[0];
+      const [ergebnisse] = await db.query('SELECT * FROM ergebnisse INNER JOIN schueler s on ergebnisse.idschueler = s.id INNER JOIN klassen k on s.idklasse = k.id WHERE k.id = ?', [id]);
+      const [massstaebe] = await db.query('SELECT * FROM massstaebe WHERE klassenStufe = ? ORDER BY werte DESC', [ergebnisse[0].stufe]);
+      const [notenMassstaebe] = await db.query('SELECT * FROM noten_massstaebe ORDER BY durchschnitt DESC');
 
-      const [schueler] = await db.query('SELECT id FROM schueler WHERE idklasse = ?', [klasse.id]);
+      const schueler = groupBy(ergebnisse, (ergebnis) => ergebnis.idschueler);
+      const grouped = groupBy(massstaebe, (m) => m.geschlecht);
+      const groupedMassstaebe = {
+        m: groupBy(grouped.m, (m) => m.iddisziplin),
+        w: groupBy(grouped.w, (m) => m.iddisziplin),
+      };
 
-      const schuelerErgebnisse = await Promise.all(
-        schueler.map((s) => auswertungSchueler(s.id, db)),
+      const schuelerErgebnisse = Object.values(schueler).map(
+        (s) => auswertungSchueler(s, groupedMassstaebe[s[0].geschlecht], notenMassstaebe),
       );
 
       return {
