@@ -1,79 +1,79 @@
 create table disziplinen
 (
-    id      int auto_increment
-        primary key,
-    name    varchar(255) not null,
-    best    varchar(255) not null,
-    einheit varchar(10)  not null
+	id int auto_increment
+		primary key,
+	name varchar(255) not null,
+	best varchar(255) not null,
+	einheit varchar(10) not null
 );
 
 create table klassen
 (
-    id    int auto_increment
-        primary key,
-    stufe int not null,
-    name  int not null
+	id int auto_increment
+		primary key,
+	stufe int not null,
+	name int not null
 );
 
 create index stufe__index
-    on klassen (stufe);
+	on klassen (stufe);
 
 create table massstaebe
 (
-    id           int auto_increment
-        primary key,
-    iddisziplin  int            not null,
-    klassenStufe int            not null,
-    geschlecht   set ('m', 'w') null,
-    punkte       int            not null,
-    werte        float          null,
-    constraint `disziplin-massstaebe___fk`
-        foreign key (iddisziplin) references disziplinen (id)
-            on update cascade on delete cascade,
-    constraint `klassenstufe-masstaebe___fk`
-        foreign key (klassenStufe) references klassen (stufe)
+	id int auto_increment
+		primary key,
+	iddisziplin int not null,
+	klassenStufe int not null,
+	geschlecht set('m', 'w') null,
+	punkte int not null,
+	werte float null,
+	constraint `disziplin-massstaebe___fk`
+		foreign key (iddisziplin) references disziplinen (id)
+			on update cascade on delete cascade,
+	constraint `klassenstufe-masstaebe___fk`
+		foreign key (klassenStufe) references klassen (stufe)
 );
 
 create table schueler
 (
-    id         int auto_increment
-        primary key,
-    vorname    varchar(255)   not null,
-    nachname   varchar(255)   not null,
-    geschlecht set ('m', 'w') not null,
-    idklasse   int            not null,
-    status     varchar(255)   null,
-    constraint `klasse-schueler___fk`
-        foreign key (idklasse) references klassen (id)
-            on update cascade on delete cascade
+	id int auto_increment
+		primary key,
+	vorname varchar(255) not null,
+	nachname varchar(255) not null,
+	geschlecht set('m', 'w') not null,
+	idklasse int not null,
+	status varchar(255) null,
+	constraint `klasse-schueler___fk`
+		foreign key (idklasse) references klassen (id)
+			on update cascade on delete cascade
 );
 
 create table ergebnisse
 (
-    id          int auto_increment
-        primary key,
-    idschueler  int          not null,
-    iddisziplin int          not null,
-    wert        float        not null,
-    allWerte    varchar(255) not null,
-    status      varchar(1)   null,
-    constraint `disziplin-ergebnisse___fk`
-        foreign key (iddisziplin) references disziplinen (id)
-            on update cascade on delete cascade,
-    constraint `schueler-ergebnisse___fk`
-        foreign key (idschueler) references schueler (id)
-            on update cascade on delete cascade
+	id int auto_increment
+		primary key,
+	idschueler int not null,
+	iddisziplin int not null,
+	wert float null,
+	allWerte varchar(255) not null,
+	status varchar(1) null,
+	constraint `disziplin-ergebnisse___fk`
+		foreign key (iddisziplin) references disziplinen (id)
+			on update cascade on delete cascade,
+	constraint `schueler-ergebnisse___fk`
+		foreign key (idschueler) references schueler (id)
+			on update cascade on delete cascade
 );
 
 create table user
 (
-    id       int auto_increment
-        primary key,
-    username varchar(255)                         not null,
-    password varchar(255)                         null,
-    rolle    set ('admin', 'leiter', 'schreiber') not null,
-    constraint user_username_uindex
-        unique (username)
+	id int auto_increment
+		primary key,
+	username varchar(255) not null,
+	password varchar(255) null,
+	rolle set('admin', 'leiter', 'schreiber') not null,
+	constraint user_username_uindex
+		unique (username)
 );
 
 
