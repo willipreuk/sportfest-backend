@@ -1,0 +1,208 @@
+# This file was generated based on ".graphqlconfig". Do not edit manually.
+
+schema {
+    query: Query
+    mutation: Mutation
+}
+
+type AllMassstaebePayload {
+    massstaebe: [Massstab!]
+    total: Int!
+}
+
+type Auswertung {
+    disziplin: Disziplin!
+    punkte: Int!
+    wert: Float!
+}
+
+type AuswertungSchueler {
+    ergebnisse: [Auswertung!]
+    note: Int!
+    punkte: Int!
+    schueler: Schueler!
+}
+
+type AuswertungStufe {
+    bestM: [AuswertungSchueler!]!
+    bestW: [AuswertungSchueler!]!
+}
+
+type AuswertungStufen {
+    bestM: [AuswertungSchueler!]!
+    bestW: [AuswertungSchueler!]!
+}
+
+type CreateUserPayload {
+    id: Int!
+    rolle: String!
+    username: String!
+}
+
+type DeleteDisziplinPayload {
+    id: Int!
+}
+
+type DeleteErgebnisPayload {
+    id: Int!
+}
+
+type DeleteKlassePayload {
+    id: Int!
+}
+
+type DeleteMassstabPayload {
+    id: Int!
+}
+
+type DeleteSchuelerPayload {
+    id: Int!
+}
+
+type DeleteUserPayload {
+    id: Int!
+}
+
+type Disziplin {
+    best: String!
+    einheit: String!
+    id: Int!
+    name: String!
+}
+
+type Ergebnis {
+    allWerte: [Float!]
+    disziplin: Disziplin!
+    id: Int!
+    schueler: Schueler!
+    status: String
+    wert: Float
+}
+
+type Klasse {
+    id: Int!
+    name: Int!
+    stufe: Int!
+}
+
+type LoginPayload {
+    jwt: String!
+    user: User!
+}
+
+type Massstab {
+    disziplin: Disziplin!
+    geschlecht: Geschlecht!
+    id: Int!
+    klassenStufe: Int!
+    punkte: Int!
+    werte: Float!
+}
+
+type Mutation {
+    addDisziplin(best: Best!, einheit: String!, name: String!): Disziplin!
+    addKlasse(name: Int!, stufe: Int!): Klasse!
+    addMassstab(geschlecht: Geschlecht!, iddisziplin: Int!, klassenStufe: Int!, punkte: Int!, werte: Float!): Massstab!
+    addSchueler(geschlecht: Geschlecht, idklasse: Int!, nachname: String!, vorname: String!): Schueler!
+    addUser(password: String!, rolle: Rolle!, username: String!): CreateUserPayload!
+    deleteDisziplin(id: Int!): DeleteDisziplinPayload!
+    deleteErgebnis(id: Int!): DeleteErgebnisPayload!
+    deleteKlasse(id: Int!): DeleteKlassePayload!
+    deleteMassstab(id: Int!): DeleteMassstabPayload!
+    deleteSchueler(id: Int!): DeleteSchuelerPayload!
+    deleteUser(id: Int!): DeleteUserPayload!
+    login(password: String!, username: String!): LoginPayload
+    updateDisziplin(best: Best, einheit: String, id: Int!, name: String): Disziplin!
+    updateErgebnis(allWerte: String, iddisziplin: Int, idschueler: Int, status: String, wert: Float): Ergebnis!
+    updateKlasse(id: Int!, name: Int, stufe: Int): Klasse!
+    updateMassstab(geschlecht: Geschlecht, id: Int!, iddisziplin: Int, klassenStufe: Int, punkte: Int, werte: Float): Massstab!
+    updateSchueler(geschlecht: Geschlecht, id: Int!, idklasse: Int, nachname: String, status: String, vorname: String): Schueler!
+    updateUser(id: Int!, password: String, rolle: Rolle, username: String): UpdateUserPayload!
+    uploadSchueler(file: Upload!): UploadSchuelerPayload!
+}
+
+type Query {
+    allDisziplin(limit: Int, name: String, offset: Int): allDisziplinPayload
+    allErgebnis(iddisziplin: Int, idschueler: Int): [Ergebnis!]
+    allErgebnisByKlasse(iddisziplin: Int!, idklasse: Int!): [Ergebnis!]
+    allKlassen(limit: Int, offset: Int, stufe: Int): allKlassenPayload!
+    allMassstaebe(iddisziplin: Int, klassenStufe: Int, limit: Int, offset: Int): AllMassstaebePayload
+    allSchueler(idklasse: Int, limit: Int, offset: Int): allSchuelerPayload
+    allUser: [User!]
+    auswertungKlasse(id: Int!): [AuswertungSchueler!]
+    auswertungSchueler(id: Int!): AuswertungSchueler
+    auswertungStufe(stufe: Int!): AuswertungStufe
+    auswertungStufen(bis: Int!, von: Int!): AuswertungStufen
+    disziplin(id: Int!): Disziplin
+    ergebnis(id: Int!): Ergebnis
+    klasse(id: Int!): Klasse
+    massstab(geschlecht: Geschlecht!, iddisziplin: Int!, klassenStufe: Int!): [Massstab!]
+    schueler(id: Int!): Schueler
+    user(id: Int, username: String): User
+}
+
+type Schueler {
+    geschlecht: Geschlecht!
+    id: Int!
+    klasse: Klasse!
+    nachname: String!
+    status: String
+    vorname: String!
+}
+
+type UpdateUserPayload {
+    id: Int!
+    rolle: String!
+    username: String!
+}
+
+type UploadSchuelerPayload {
+    schuelerCount: Int!
+}
+
+type User {
+    id: Int!
+    password: String!
+    rolle: Rolle!
+    username: String!
+}
+
+type allDisziplinPayload {
+    disziplinen: [Disziplin!]
+    total: Int
+}
+
+type allKlassenPayload {
+    klassen: [Klasse!]
+    total: Int!
+}
+
+type allSchuelerPayload {
+    schueler: [Schueler!]
+    total: Int
+}
+
+enum Best {
+    high
+    low
+}
+
+enum CacheControlScope {
+    PRIVATE
+    PUBLIC
+}
+
+enum Geschlecht {
+    m
+    w
+}
+
+enum Rolle {
+    admin
+    leiter
+    schreiber
+}
+
+
+"The `Upload` scalar type represents a file upload."
+scalar Upload
