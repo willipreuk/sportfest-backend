@@ -1,5 +1,14 @@
 import { flatten } from 'lodash';
 
+const calcNote = (punkte, notenMassstaebe) => {
+  for (let i = 0; i < notenMassstaebe.length; i += 1) {
+    if (punkte > notenMassstaebe[i].durchschnitt) {
+      return notenMassstaebe[i].note;
+    }
+  }
+  return 6;
+};
+
 const auswertungSchueler = async (id, db) => {
   const [rows] = await db.query(
     'SELECT s.id, s.vorname, s.nachname, s.geschlecht, k.stufe, k.name FROM schueler s LEFT JOIN klassen k ON k.id = s.idklasse WHERE s.id = ?',
@@ -46,9 +55,12 @@ const auswertungSchueler = async (id, db) => {
     (a, b) => ({ punkte: a.punkte + b.punkte }), { punkte: 0 },
   ).punkte;
 
+  const [notenMassstaebe] = await db.query('SELECT note, durchschnitt FROM noten_massstaebe ORDER BY durchschnitt DESC');
+  const note = await calcNote(summePunkte, notenMassstaebe);
+
   return {
     idschueler: schueler.id,
-    note: 1,
+    note,
     punkte: summePunkte,
     ergebnisse: res,
   };
