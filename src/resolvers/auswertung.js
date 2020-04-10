@@ -53,7 +53,54 @@ const auswertungStufe = async (stufe, geschlecht, db) => {
   );
 };
 
+const auswertungKlasse = async (id, db) => {
+  const [ergebnisse] = await db.query('SELECT * FROM ergebnisse INNER JOIN schueler s on ergebnisse.idschueler = s.id INNER JOIN klassen k on s.idklasse = k.id WHERE k.id = ?', [id]);
+  if (ergebnisse.length !== 0) {
+    const [massstaebe] = await db.query('SELECT * FROM massstaebe WHERE klassenStufe = ? ORDER BY werte DESC', [ergebnisse[0].stufe]);
+    const [notenMassstaebe] = await db.query('SELECT * FROM noten_massstaebe ORDER BY durchschnitt DESC');
+
+    const schueler = groupBy(ergebnisse, (ergebnis) => ergebnis.idschueler);
+    const grouped = groupBy(massstaebe, (m) => m.geschlecht);
+    const groupedMassstaebe = {
+      m: groupBy(grouped.m, (m) => m.iddisziplin),
+      w: groupBy(grouped.w, (m) => m.iddisziplin),
+    };
+
+    const schuelerErgebnisse = Object.values(schueler).map(
+      (s) => auswertungSchueler(s, groupedMassstaebe[s[0].geschlecht], notenMassstaebe),
+    );
+
+    return {
+      schuelerAuswertung: schuelerErgebnisse,
+      durchschnitt: round(
+        meanBy(schuelerErgebnisse, (schuelerErgebniss) => schuelerErgebniss.punkte), 2,
+      ),
+    };
+  }
+};
+
 export default {
+  AuswertungStufen: {
+    besteKlassen: async ({ von, bis }, args, { db, permission }) => {
+      permission.check({ role: permission.LEITER });
+
+      const allNumbers = [];
+      for (let i = von; i <= bis; i += 1) {
+        allNumbers.push(i);
+      }
+
+      const [klassen] = await db.query('SELECT * FROM klassen WHERE stufe IN (?)', [allNumbers]);
+
+      const klassenAuswertung = (await Promise.all(
+        klassen.map(async (klasse) => {
+          const res = await auswertungKlasse(klasse.id, db);
+          return {...res, idklasse: klasse.id}
+        }),
+      )).filter((auswertung) => auswertung !== undefined);
+
+      return klassenAuswertung.sort((a, b) => b.durchschnitt - a.durchschnitt);
+    },
+  },
   AuswertungStufe: {
     bestM: async ({ stufe }, args, { db, permission }) => {
       permission.check({ rolle: permission.LEITER });
@@ -82,28 +129,7 @@ export default {
     },
     auswertungKlasse: async (obj, { id }, { db, permission }) => {
       permission.check({ rolle: permission.ADMIN });
-
-      const [ergebnisse] = await db.query('SELECT * FROM ergebnisse INNER JOIN schueler s on ergebnisse.idschueler = s.id INNER JOIN klassen k on s.idklasse = k.id WHERE k.id = ?', [id]);
-      const [massstaebe] = await db.query('SELECT * FROM massstaebe WHERE klassenStufe = ? ORDER BY werte DESC', [ergebnisse[0].stufe]);
-      const [notenMassstaebe] = await db.query('SELECT * FROM noten_massstaebe ORDER BY durchschnitt DESC');
-
-      const schueler = groupBy(ergebnisse, (ergebnis) => ergebnis.idschueler);
-      const grouped = groupBy(massstaebe, (m) => m.geschlecht);
-      const groupedMassstaebe = {
-        m: groupBy(grouped.m, (m) => m.iddisziplin),
-        w: groupBy(grouped.w, (m) => m.iddisziplin),
-      };
-
-      const schuelerErgebnisse = Object.values(schueler).map(
-        (s) => auswertungSchueler(s, groupedMassstaebe[s[0].geschlecht], notenMassstaebe),
-      );
-
-      return {
-        schueler: schuelerErgebnisse,
-        durchschnitt: round(
-          meanBy(schuelerErgebnisse, (schuelerErgebniss) => schuelerErgebniss.punkte), 2,
-        ),
-      };
+      return auswertungKlasse(id, db);
     },
     auswertungStufe: async (obj, { stufe }) => ({
       stufe,
@@ -122,6 +148,8 @@ export default {
       return {
         bestM,
         bestW,
+        von,
+        bis,
       };
     },
   },

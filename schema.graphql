@@ -12,19 +12,20 @@ type AllMassstaebePayload {
 
 type Auswertung {
     disziplin: Disziplin!
-    punkte: Int!
+    punkte: Float!
     wert: Float!
 }
 
 type AuswertungKlasse {
-    durchschnitt: Float!
-    schueler: [AuswertungSchueler!]
+    durchschnitt: Float
+    klasse: Klasse
+    schuelerAuswertung: [AuswertungSchueler!]
 }
 
 type AuswertungSchueler {
     ergebnisse: [Auswertung!]
     note: Int!
-    punkte: Int!
+    punkte: Float!
     schueler: Schueler!
 }
 

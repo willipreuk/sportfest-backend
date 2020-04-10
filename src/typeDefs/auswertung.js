@@ -15,8 +15,9 @@ export default gql`
     }
 
     type AuswertungKlasse {
-        schueler: [AuswertungSchueler!]
-        durchschnitt: Float!
+        schuelerAuswertung: [AuswertungSchueler!]
+        durchschnitt: Float
+        klasse: Klasse
     }
     
     type AuswertungStufe {
