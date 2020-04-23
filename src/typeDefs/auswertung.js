@@ -4,14 +4,20 @@ export default gql`
     type Auswertung {
         disziplin: Disziplin!
         wert: Float!
-        punkte: Int!
+        punkte: Float!
     }
     
     type AuswertungSchueler {
         schueler: Schueler!
         note: Int!
-        punkte: Int!
+        punkte: Float!
         ergebnisse: [Auswertung!]
+    }
+
+    type AuswertungKlasse {
+        schuelerAuswertung: [AuswertungSchueler!]
+        durchschnitt: Float
+        klasse: Klasse
     }
     
     type AuswertungStufe {
@@ -22,10 +28,11 @@ export default gql`
     type AuswertungStufen {
         bestM: [AuswertungSchueler!]!
         bestW: [AuswertungSchueler!]!
+        besteKlassen: [AuswertungKlasse!]!
     }
   
     extend type Query {
-        auswertungKlasse(id: Int!): [AuswertungSchueler!]
+        auswertungKlasse(id: Int!): AuswertungKlasse
         auswertungSchueler(id: Int!): AuswertungSchueler
         auswertungStufe(stufe: Int!): AuswertungStufe
         auswertungStufen(von: Int!, bis: Int!): AuswertungStufen

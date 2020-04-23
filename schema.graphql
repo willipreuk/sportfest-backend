@@ -12,14 +12,20 @@ type AllMassstaebePayload {
 
 type Auswertung {
     disziplin: Disziplin!
-    punkte: Int!
+    punkte: Float!
     wert: Float!
+}
+
+type AuswertungKlasse {
+    durchschnitt: Float
+    klasse: Klasse
+    schuelerAuswertung: [AuswertungSchueler!]
 }
 
 type AuswertungSchueler {
     ergebnisse: [Auswertung!]
     note: Int!
-    punkte: Int!
+    punkte: Float!
     schueler: Schueler!
 }
 
@@ -31,6 +37,7 @@ type AuswertungStufe {
 type AuswertungStufen {
     bestM: [AuswertungSchueler!]!
     bestW: [AuswertungSchueler!]!
+    besteKlassen: [AuswertungKlasse!]!
 }
 
 type CreateUserPayload {
@@ -129,7 +136,7 @@ type Query {
     allMassstaebe(iddisziplin: Int, klassenStufe: Int, limit: Int, offset: Int): AllMassstaebePayload
     allSchueler(idklasse: Int, limit: Int, offset: Int): allSchuelerPayload
     allUser: [User!]
-    auswertungKlasse(id: Int!): [AuswertungSchueler!]
+    auswertungKlasse(id: Int!): AuswertungKlasse
     auswertungSchueler(id: Int!): AuswertungSchueler
     auswertungStufe(stufe: Int!): AuswertungStufe
     auswertungStufen(bis: Int!, von: Int!): AuswertungStufen
