@@ -6,6 +6,7 @@ export default gql`
         name: String!
         best: String!
         einheit: String!
+        klasse: Boolean!
     }
     
     enum Best {
@@ -28,8 +29,8 @@ export default gql`
     }
 
     extend type Mutation {
-        addDisziplin(name: String!, best: Best!, einheit: String!): Disziplin!
-        updateDisziplin(id: Int!, name: String, best: Best, einheit: String): Disziplin!
+        addDisziplin(name: String!, best: Best!, einheit: String!, klasse: Boolean!): Disziplin!
+        updateDisziplin(id: Int!, name: String, best: Best, einheit: String, klasse: Boolean): Disziplin!
         deleteDisziplin(id: Int!): DeleteDisziplinPayload!
     }
 `;

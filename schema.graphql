@@ -74,6 +74,7 @@ type Disziplin {
     best: String!
     einheit: String!
     id: Int!
+    klasse: Boolean!
     name: String!
 }
 
@@ -107,7 +108,7 @@ type Massstab {
 }
 
 type Mutation {
-    addDisziplin(best: Best!, einheit: String!, name: String!): Disziplin!
+    addDisziplin(best: Best!, einheit: String!, klasse: Boolean!, name: String!): Disziplin!
     addKlasse(name: Int!, stufe: Int!): Klasse!
     addMassstab(geschlecht: Geschlecht!, iddisziplin: Int!, klassenStufe: Int!, punkte: Int!, werte: Float!): Massstab!
     addSchueler(geschlecht: Geschlecht, idklasse: Int!, nachname: String!, vorname: String!): Schueler!
@@ -119,7 +120,7 @@ type Mutation {
     deleteSchueler(id: Int!): DeleteSchuelerPayload!
     deleteUser(id: Int!): DeleteUserPayload!
     login(password: String!, username: String!): LoginPayload
-    updateDisziplin(best: Best, einheit: String, id: Int!, name: String): Disziplin!
+    updateDisziplin(best: Best, einheit: String, id: Int!, klasse: Boolean, name: String): Disziplin!
     updateErgebnis(allWerte: String, iddisziplin: Int, idschueler: Int, status: String, wert: Float): Ergebnis!
     updateKlasse(id: Int!, name: Int, stufe: Int): Klasse!
     updateMassstab(geschlecht: Geschlecht, id: Int!, iddisziplin: Int, klassenStufe: Int, punkte: Int, werte: Float): Massstab!
