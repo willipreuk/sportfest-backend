@@ -9,10 +9,13 @@ const klasseRootQuery = async (obj, args, { db, permission }) => {
 
 export default {
   Schueler: {
-    klasse: klasseRootQuery
+    klasse: klasseRootQuery,
   },
   AuswertungKlasse: {
-    klasse: klasseRootQuery
+    klasse: klasseRootQuery,
+  },
+  KlassenErgebnis: {
+    klasse: klasseRootQuery,
   },
   Query: {
     allKlassen: async (

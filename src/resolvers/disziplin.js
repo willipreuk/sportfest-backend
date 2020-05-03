@@ -17,6 +17,9 @@ export default {
   Auswertung: {
     disziplin: disziplinRootQuery,
   },
+  KlassenErgebnis: {
+    disziplin: disziplinRootQuery,
+  },
   Query: {
     allDisziplin: async (
       obj,

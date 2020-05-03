@@ -5,5 +5,15 @@ import massstaebe from './massstaebe';
 import disziplin from './disziplin';
 import ergebnis from './ergebnis';
 import auswertung from './auswertung';
+import klassenErgebnis from './klassenErgebnis';
 
-export default [user, klasse, schueler, massstaebe, disziplin, ergebnis, auswertung];
+export default [
+  user,
+  klasse,
+  schueler,
+  massstaebe,
+  disziplin,
+  ergebnis,
+  auswertung,
+  klassenErgebnis,
+];
