@@ -2,6 +2,20 @@ import {
   flatten, groupBy, meanBy, round,
 } from 'lodash';
 
+const auswertungKlassenDisziplin = (ergebnisse, massstaebeDisziplinen) => {
+  let punkte = 0;
+  ergebnisse.forEach((ergebniss) => {
+    const massstaebe = massstaebeDisziplinen[ergebniss.iddisziplin];
+    for (let i = 0; i < massstaebe.length; i += 1) {
+      if (ergebniss.wert > massstaebe[i].werte) {
+        punkte += massstaebe[i - 1].punkte;
+        break;
+      }
+    }
+  });
+  return punkte;
+};
+
 const calcNote = (punkte, notenMassstaebe) => {
   for (let i = 0; i < notenMassstaebe.length; i += 1) {
     if (punkte > notenMassstaebe[i].durchschnitt) {
@@ -54,6 +68,18 @@ const auswertungStufe = async (stufe, geschlecht, db) => {
 };
 
 const auswertungKlasse = async (id, db) => {
+  let klassenDisziplinPunkte = 0;
+  const [ergebnissKlassenDisziplin] = await db.query('SELECT * FROM klassenErgebnisse e INNER JOIN klassen k on e.idklasse = k.id WHERE k.id = ?', [id]);
+  if (ergebnissKlassenDisziplin.length > 0) {
+    const [klassenDisziplinMassstaebe] = await db.query('SELECT * FROM massstaebe m INNER JOIN disziplinen d on m.iddisziplin = d.id WHERE m.klassenStufe = ? AND d.klasse = true ORDER BY m.werte DESC', [ergebnissKlassenDisziplin[0].stufe]);
+    const massstaebeGrouped = groupBy(
+      klassenDisziplinMassstaebe, (massstab) => massstab.iddisziplin,
+    );
+    klassenDisziplinPunkte = auswertungKlassenDisziplin(
+      ergebnissKlassenDisziplin, massstaebeGrouped,
+    );
+  }
+
   const [ergebnisse] = await db.query('SELECT * FROM ergebnisse INNER JOIN schueler s on ergebnisse.idschueler = s.id INNER JOIN klassen k on s.idklasse = k.id WHERE k.id = ?', [id]);
   if (ergebnisse.length !== 0) {
     const [massstaebe] = await db.query('SELECT * FROM massstaebe WHERE klassenStufe = ? ORDER BY werte DESC', [ergebnisse[0].stufe]);
@@ -74,7 +100,7 @@ const auswertungKlasse = async (id, db) => {
       schuelerAuswertung: schuelerErgebnisse,
       durchschnitt: round(
         meanBy(schuelerErgebnisse, (schuelerErgebniss) => schuelerErgebniss.punkte), 2,
-      ),
+      ) + klassenDisziplinPunkte,
     };
   }
 };
@@ -94,7 +120,7 @@ export default {
       const klassenAuswertung = (await Promise.all(
         klassen.map(async (klasse) => {
           const res = await auswertungKlasse(klasse.id, db);
-          return {...res, idklasse: klasse.id}
+          return { ...res, idklasse: klasse.id };
         }),
       )).filter((auswertung) => auswertung !== undefined);
 
