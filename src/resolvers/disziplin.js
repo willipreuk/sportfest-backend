@@ -25,7 +25,7 @@ export default {
       obj,
       { name, offset = 0, limit = Number.MAX_SAFE_INTEGER },
       { db, permission }) => {
-      permission.check({ rolle: permission.ADMIN });
+      permission.check({ rolle: permission.SCHREIBER });
 
       if (name) {
         const [rows] = await db.query('SELECT * FROM disziplinen WHERE name = ? LIMIT ?, ?', [name, offset, limit]);
