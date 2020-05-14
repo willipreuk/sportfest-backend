@@ -23,26 +23,36 @@ export default {
   Query: {
     allDisziplin: async (
       obj,
-      { name, offset = 0, limit = Number.MAX_SAFE_INTEGER },
+      { offset = 0, limit = Number.MAX_SAFE_INTEGER },
       { db, permission }) => {
       permission.check({ rolle: permission.SCHREIBER });
 
-      if (name) {
-        const [rows] = await db.query('SELECT * FROM disziplinen WHERE name = ? LIMIT ?, ?', [name, offset, limit]);
-        const [total] = await db.query('SELECT COUNT(id) FROM disziplinen WHERE name = ?', [name]);
-
-        return { total: total[0]['COUNT(id)'], disziplinen: rows };
-      }
       const [rows] = await db.query('SELECT * FROM disziplinen LIMIT ?, ?', [offset, limit]);
       const [total] = await db.query('SELECT COUNT(id) FROM disziplinen');
 
-      return { total: total[0]['COUNT(id)'], disziplinen: rows };
+      const disziplinen = await Promise.all(rows.map(async (disziplin) => {
+        const [massstaebe] = await db.query('SELECT werte FROM massstaebe WHERE iddisziplin = ? ORDER BY werte DESC', [disziplin.id]);
+        return {
+          ...disziplin,
+          highestWert: massstaebe[0].werte,
+          lowestWert: massstaebe[massstaebe.length - 1].werte,
+        };
+      }));
+
+      return { total: total[0]['COUNT(id)'], disziplinen };
     },
     disziplin: async (obj, { id }, { db, permission }) => {
       permission.check({ rolle: permission.ADMIN });
 
       const [rows] = await db.query('SELECT * FROM disziplinen WHERE id = ?', [id]);
-      return rows[0];
+
+      const [masstaebe] = await db.query('SELECT werte FROM massstaebe WHERE iddisziplin = ? ORDER BY werte DESC', [id]);
+
+      return {
+        ...rows[0],
+        highestWert: masstaebe[0].werte,
+        lowestWert: masstaebe[masstaebe.length - 1].werte,
+      };
     },
   },
   Mutation: {

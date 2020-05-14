@@ -7,6 +7,8 @@ export default gql`
         best: String!
         einheit: String!
         klasse: Boolean!
+        highestWert: Float!
+        lowestWert: Float!
     }
     
     enum Best {

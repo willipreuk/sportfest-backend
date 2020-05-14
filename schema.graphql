@@ -58,6 +58,10 @@ type DeleteKlassePayload {
     id: Int!
 }
 
+type DeleteKlassenErgebnisPayload {
+    id: Int!
+}
+
 type DeleteMassstabPayload {
     id: Int!
 }
@@ -73,8 +77,10 @@ type DeleteUserPayload {
 type Disziplin {
     best: String!
     einheit: String!
+    highestWert: Float!
     id: Int!
     klasse: Boolean!
+    lowestWert: Float!
     name: String!
 }
 
@@ -91,6 +97,13 @@ type Klasse {
     id: Int!
     name: Int!
     stufe: Int!
+}
+
+type KlassenErgebnis {
+    disziplin: Disziplin!
+    id: Int!
+    klasse: Klasse!
+    wert: Float
 }
 
 type LoginPayload {
@@ -116,6 +129,7 @@ type Mutation {
     deleteDisziplin(id: Int!): DeleteDisziplinPayload!
     deleteErgebnis(id: Int!): DeleteErgebnisPayload!
     deleteKlasse(id: Int!): DeleteKlassePayload!
+    deleteKlassenErgebnis(id: Int!): DeleteKlassenErgebnisPayload
     deleteMassstab(id: Int!): DeleteMassstabPayload!
     deleteSchueler(id: Int!): DeleteSchuelerPayload!
     deleteUser(id: Int!): DeleteUserPayload!
@@ -123,6 +137,7 @@ type Mutation {
     updateDisziplin(best: Best, einheit: String, id: Int!, klasse: Boolean, name: String): Disziplin!
     updateErgebnis(allWerte: String, iddisziplin: Int, idschueler: Int, status: String, wert: Float): Ergebnis!
     updateKlasse(id: Int!, name: Int, stufe: Int): Klasse!
+    updateKlassenErgebnis(iddisziplin: Int, idklasse: Int, wert: Float): KlassenErgebnis
     updateMassstab(geschlecht: Geschlecht, id: Int!, iddisziplin: Int, klassenStufe: Int, punkte: Int, werte: Float): Massstab!
     updateSchueler(geschlecht: Geschlecht, id: Int!, idklasse: Int, nachname: String, status: String, vorname: String): Schueler!
     updateUser(id: Int!, password: String, rolle: Rolle, username: String): UpdateUserPayload!
@@ -134,6 +149,7 @@ type Query {
     allErgebnis(iddisziplin: Int, idschueler: Int): [Ergebnis!]
     allErgebnisByKlasse(iddisziplin: Int!, idklasse: Int!): [Ergebnis!]
     allKlassen(limit: Int, offset: Int, stufe: Int): allKlassenPayload!
+    allKlassenErgebnis: [KlassenErgebnis!]
     allMassstaebe(iddisziplin: Int, klassenStufe: Int, limit: Int, offset: Int): AllMassstaebePayload
     allSchueler(idklasse: Int, limit: Int, offset: Int): allSchuelerPayload
     allUser: [User!]
@@ -144,6 +160,7 @@ type Query {
     disziplin(id: Int!): Disziplin
     ergebnis(id: Int!): Ergebnis
     klasse(id: Int!): Klasse
+    klassenErgebnis(id: Int!): KlassenErgebnis
     massstab(geschlecht: Geschlecht!, iddisziplin: Int!, klassenStufe: Int!): [Massstab!]
     schueler(id: Int!): Schueler
     user(id: Int, username: String): User
